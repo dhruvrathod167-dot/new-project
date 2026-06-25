@@ -1,0 +1,1740 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ARCHAUS — Architectural Resonance{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ============================================
+     INDEX-SPECIFIC STYLES ONLY
+     ============================================ */
+  
+  /* Light Effects */
+  .light-effects-container { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .sunbeam { position: absolute; top: -20%; width: 150vw; height: 150vh; background: radial-gradient(circle at 10% 10%, rgba(201, 169, 110, 0.07) 0%, transparent 60%); transform: rotate(-15deg); transform-origin: top left; animation: sunbeamMove 25s infinite alternate ease-in-out; }
+  .sunbeam-2 { background: radial-gradient(circle at 90% 90%, rgba(242, 238, 232, 0.45) 0%, transparent 55%); animation: sunbeamMove2 30s infinite alternate ease-in-out; }
+  @keyframes sunbeamMove { 0% { transform: rotate(-15deg) translateY(0); opacity: 0.7; } 100% { transform: rotate(-8deg) translateY(3%); opacity: 1; } }
+  @keyframes sunbeamMove2 { 0% { transform: translateY(0) scale(1); opacity: 0.6; } 100% { transform: translateY(-3%) scale(1.08); opacity: 0.9; } }
+  .glow-orb { position: absolute; border-radius: 50%; filter: blur(140px); pointer-events: none; opacity: 0.3; }
+  .glow-orb-1 { width: 600px; height: 600px; background: rgba(201, 169, 110, 0.12); top: 15%; left: -15%; animation: floatOrb1 35s infinite alternate ease-in-out; }
+  .glow-orb-2 { width: 700px; height: 700px; background: rgba(242, 238, 232, 0.7); bottom: 15%; right: -15%; animation: floatOrb2 28s infinite alternate ease-in-out; }
+  @keyframes floatOrb1 { 0% { transform: translate(0, 0); } 100% { transform: translate(120px, 60px); } }
+  @keyframes floatOrb2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-90px, -70px); } }
+  
+  /* Film Grain */
+  #film-grain { position: fixed; inset: 0; z-index: 9990; pointer-events: none; opacity: 0.022; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+  
+  /* Preloader */
+  #luxury-loader { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10020; display: flex; align-items: center; justify-content: center; }
+  .loader-content { display: flex; flex-direction: column; align-items: center; width: 280px; }
+  .loader-logo { font-family: var(--font-serif); font-size: 32px; font-weight: 400; letter-spacing: 0.25em; color: var(--text-primary); margin-bottom: 2rem; opacity: 0; }
+  .loader-progress-bar { width: 100%; height: 1px; background: rgba(201, 169, 110, 0.15); position: relative; margin-bottom: 1.2rem; }
+  .loader-progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0; background: var(--accent); }
+  .loader-tag { font-family: var(--font-sans); font-size: 9px; letter-spacing: 0.35em; color: var(--text-muted); text-transform: uppercase; opacity: 0; }
+
+  /* HERO SECTION */
+  .hero-split { display: grid; grid-template-columns: 58% 42%; min-height: 100vh; position: relative; z-index: 10; overflow: hidden; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 0 6vw; position: relative; z-index: 5; }
+  .hero-eyebrow { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.6rem; }
+  .hero-eyebrow .label-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  .hero-eyebrow span.tag { font-family: var(--font-sans); font-size: 10px; font-weight: 500; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; }
+  .hero-mask-title { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 7.2rem); line-height: 0.92; font-weight: 300; color: var(--text-primary); text-transform: uppercase; margin-bottom: 2.4rem; }
+  .hero-mask-line { display: block; overflow: hidden; }
+  .hero-char { display: inline-block; transform: translateY(110%); }
+  .hero-mask-title .em { font-style: italic; color: var(--accent); }
+  .hero-editorial-description { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 18px); font-weight: 300; line-height: 1.9; color: var(--text-secondary); max-width: 460px; margin-bottom: 3rem; letter-spacing: 0.02em; }
+  .hero-cta-group { display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary-glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--text-primary); border: 1px solid rgba(201, 169, 110, 0.4); overflow: hidden; position: relative; box-shadow: 0 4px 30px rgba(201, 169, 110, 0.05); height: 52px; display: flex; align-items: center; justify-content: center; padding: 0 2rem; border-radius: 30px; text-decoration: none; }
+  .btn-shimmer { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.32), transparent); transform: skewX(-20deg); pointer-events: none; }
+  .btn-primary-glass:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.25); box-shadow: 0 0 25px rgba(201, 169, 110, 0.45); transform: translateY(-2px); }
+  .btn-primary-glass:hover .btn-shimmer { animation: buttonSweep 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+  @keyframes buttonSweep { 0% { left: -100%; } 100% { left: 200%; } }
+  .btn-secondary-ghost { background: transparent; color: var(--text-primary); border: 1px solid rgba(17, 17, 17, 0.25); display: inline-flex; align-items: center; gap: 0.8rem; padding: 1.05rem 2.5rem; border-radius: 30px; height: 52px; text-decoration: none; }
+  .btn-arrow { font-size: 16px; color: var(--accent); transition: transform 0.4s var(--ease-cinematic); display: inline-block; }
+  .btn-secondary-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .btn-secondary-ghost:hover .btn-arrow { transform: translateX(6px); }
+
+  .hero-right { position: relative; height: 100vh; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px 14px 14px 0; }
+  .hero-strip { position: relative; overflow: hidden; border-radius: 18px; }
+  .hero-strip-track { position: absolute; top: 0; left: 0; width: 100%; will-change: transform; display: flex; flex-direction: column; gap: 14px; }
+  .hero-strip-track .img-frame { aspect-ratio: 3/4; border-radius: 18px; flex-shrink: 0; }
+  .hero-strip.down .hero-strip-track { top: -20%; }
+  .hero-strip.up .hero-strip-track { top: -40%; }
+  .hero-fade-edge { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(248,246,241,0.5) 0%, transparent 14%, transparent 86%, rgba(248,246,241,0.5) 100%); z-index: 2; }
+  .hero-gold-veil { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(135deg, rgba(201,169,110,0.06), transparent 60%); z-index: 2; }
+  .hero-scroll-indicator { position: absolute; bottom: 2.4rem; left: 6vw; display: flex; align-items: center; gap: 0.8rem; z-index: 5; }
+  .scroll-text { font-family: var(--font-sans); font-size: 9px; font-weight: 500; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; }
+  .scroll-line-container { width: 60px; height: 1px; background: rgba(201, 169, 110, 0.25); position: relative; overflow: hidden; }
+  .scroll-line-fill { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: var(--accent); animation: scrollLineH 2.4s infinite cubic-bezier(0.76, 0, 0.24, 1); }
+  @keyframes scrollLineH { 0% { left: -100%; } 50% { left: 0; } 100% { left: 100%; } }
+
+  @media (max-width: 1024px) {
+    .hero-split { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 130px 6% 3rem; order: 2; }
+    .hero-right { order: 1; height: 56vh; padding: 0; grid-template-columns: 1fr 1fr; }
+    .hero-strip-track .img-frame { aspect-ratio: 3/4; }
+    .hero-scroll-indicator { display: none; }
+  }
+
+  /* MARQUEE */
+  .luxury-marquee { overflow: hidden; padding: 1.4rem 0; background: var(--bg-secondary); border-top: 1px solid rgba(201,169,110,0.1); border-bottom: 1px solid rgba(201,169,110,0.1); position: relative; z-index: 10; }
+  .marquee-track { display: flex; gap: 3rem; animation: marquee 30s linear infinite; width: max-content; }
+  .marquee-track span.txt { font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-secondary); }
+  .marquee-track span.dot { color: var(--accent); }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ABOUT SECTION */
+  .about-section { position: relative; padding: var(--section-padding-y) 0; background: var(--bg-primary); overflow: hidden; z-index: 10; }
+  .about-pin-wrap { display: grid; grid-template-columns: 36% 64%; }
+  .about-text-pinned { padding: 0 var(--section-padding-x); display: flex; flex-direction: column; justify-content: center; }
+  .about-editorial-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4.4vw, 3.8rem); font-weight: 300; line-height: 1.12; color: var(--text-primary); margin: 1.4rem 0 1.6rem; }
+  .serif-gold { font-style: italic; color: var(--accent); }
+  .about-editorial-p { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 18px); font-weight: 300; line-height: 1.95; color: var(--text-secondary); max-width: 440px; }
+  .luxury-label-small { display: flex; align-items: center; gap: 0.8rem; }
+  .label-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  .label-text { font-family: var(--font-sans); font-size: 10px; font-weight: 500; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; }
+  .about-horiz-track { display: flex; gap: 2.5rem; padding-right: 8%; width: max-content; }
+  .about-stat-card { width: min(360px, 80vw); flex-shrink: 0; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(201, 169, 110, 0.15); border-radius: 24px; padding: 2.6rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 320px; }
+  .about-stat-card .stat-number-wrap { font-family: var(--font-serif); font-size: clamp(48px, 5vw, 64px); font-weight: 300; color: var(--text-primary); line-height: 1; }
+  .about-stat-card .stat-suffix { color: var(--accent); }
+  .about-stat-card .stat-label { font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.6rem; }
+  .about-stat-card .stat-note { font-family: var(--font-sans); font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-top: 1.5rem; }
+  .about-horiz-viewport { overflow: hidden; display: flex; align-items: center; height: 100%; min-height: 460px; }
+
+  @media (max-width: 1024px) {
+    .about-pin-wrap { grid-template-columns: 1fr; }
+    .about-text-pinned { padding: 0 var(--section-padding-x) 3rem; }
+    .about-horiz-viewport { min-height: auto; padding: 0 var(--section-padding-x) 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .about-horiz-track { width: max-content; }
+  }
+
+  /* PROJECTS SECTION */
+  .projects-section { position: relative; padding: var(--section-padding-y) 0; background-color: var(--bg-secondary); overflow: hidden; z-index: 10; }
+  .projects-header-wrap { padding: 0 var(--section-padding-x); margin-bottom: 4rem; }
+  .editorial-section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5.8vw, 5.25rem); font-weight: 300; color: var(--text-primary); line-height: 1.05; }
+  .editorial-section-sub { font-family: var(--font-sans); font-size: 12px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-top: 1rem; }
+  .project-stack { position: relative; }
+  .project-stack-card { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .project-stack-inner { position: relative; width: 100%; height: 100%; transform: scale(0.9); transform-origin: center; will-change: transform; }
+  .project-stack-inner .img-frame { width: 100%; height: 100%; border-radius: 0; }
+  .project-stack-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17,17,17,0) 35%, rgba(17,17,17,0.55) 100%); z-index: 2; }
+  .project-stack-info { position: absolute; left: var(--section-padding-x); bottom: 4rem; z-index: 3; color: #f8f6f1; max-width: 640px; }
+  .proj-number-editorial { font-family: var(--font-serif); font-size: 22px; color: var(--accent); display: block; margin-bottom: 0.6rem; }
+  .proj-name-mask { font-family: var(--font-serif); font-size: clamp(2.4rem, 6.5vw, 5rem); font-weight: 300; line-height: 1.02; text-transform: uppercase; overflow: hidden; }
+  .proj-name-mask .pchar { display: inline-block; transform: translateY(105%); }
+  .proj-meta-row { display: flex; gap: 1.6rem; margin-top: 1.4rem; font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(248,246,241,0.8); }
+  .proj-meta-row .accentdot { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .project-stack-card { height: 70vh; }
+    .project-stack-inner { transform: scale(1) !important; }
+    .project-stack-info { bottom: 2rem; }
+  }
+
+  /* PHILOSOPHY SECTION */
+  .philosophy-section { padding: var(--section-padding-y) var(--section-padding-x); background: var(--bg-white); position: relative; overflow: hidden; text-align: center; z-index: 10; }
+  .philosophy-content { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+  .philosophy-statement { font-family: var(--font-serif); font-size: clamp(1.7rem, 4.2vw, 3.6rem); font-weight: 300; line-height: 1.5; margin-top: 2.6rem; margin-bottom: 3rem; }
+  .phrase { color: var(--text-muted); transition: color 0.15s linear; }
+  .philosophy-body { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 18px); font-weight: 300; line-height: 2; color: var(--text-secondary); max-width: 580px; margin-bottom: 3.5rem; }
+  .signature-wrap { display: flex; align-items: center; gap: 1.5rem; }
+  .sig-line { width: 40px; height: 1px; background: var(--accent); }
+  .philosophy-sig { font-family: var(--font-serif); font-size: 20px; font-style: italic; color: var(--accent); }
+
+  /* TEXTURE SECTION */
+  .texture-section { padding: var(--section-padding-y) 0; background: var(--bg-primary); position: relative; z-index: 10; }
+  .texture-header-wrap { padding: 0 var(--section-padding-x); margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; }
+  .texture-hint { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+  .texture-drag-viewport { overflow: hidden; cursor: grab; padding-left: var(--section-padding-x); }
+  .texture-drag-viewport.dragging { cursor: grabbing; }
+  .texture-drag-track { display: flex; gap: 2rem; width: max-content; user-select: none; }
+  .texture-luxury-item { position: relative; width: min(360px, 72vw); flex-shrink: 0; }
+  .texture-luxury-item .img-frame { aspect-ratio: 3/4; border-radius: 18px; }
+  .texture-luxury-item img { pointer-events: none; }
+  .texture-label-badge { position: absolute; bottom: 1.6rem; left: 1.6rem; font-family: var(--font-sans); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; color: var(--bg-primary); background: rgba(17, 17, 17, 0.7); backdrop-filter: blur(10px); padding: 0.6rem 1.1rem; border-radius: 4px; text-transform: uppercase; z-index: 5; }
+
+  /* SERVICES SECTION */
+  .services-section { padding: var(--section-padding-y) var(--section-padding-x); background: var(--bg-secondary); position: relative; z-index: 10; }
+  .services-editorial-container { max-width: 1400px; margin: 0 auto; }
+  .services-split-header { display: grid; grid-template-columns: 70% 30%; gap: 2rem; align-items: flex-end; margin-bottom: 4.5rem; }
+  .services-header-desc { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 18px); font-weight: 300; line-height: 1.8; color: var(--text-secondary); }
+  .accordion-list { border-top: 1px solid rgba(201, 169, 110, 0.2); }
+  .accordion-row { border-bottom: 1px solid rgba(201, 169, 110, 0.2); }
+  .accordion-head { display: grid; grid-template-columns: 70px 1fr 30px; align-items: center; gap: 1.5rem; padding: 1.8rem 0.5rem; cursor: pointer; background: none; border: none; width: 100%; text-align: left; }
+  .accordion-row .row-num { font-family: var(--font-serif); font-size: 20px; color: var(--accent); }
+  .accordion-row .row-title { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.6vw, 2.1rem); font-weight: 300; color: var(--text-primary); transition: color 0.4s; }
+  .accordion-row.open .row-title { color: var(--accent); }
+  .accordion-plus { font-size: 20px; color: var(--accent); transition: transform 0.4s var(--ease-cinematic); justify-self: end; }
+  .accordion-row.open .accordion-plus { transform: rotate(45deg); }
+  .accordion-body { height: 0; overflow: hidden; transition: height 0.5s var(--ease-cinematic); }
+  .accordion-body-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2.5rem; padding: 0 0.5rem 2.4rem; align-items: center; }
+  .accordion-body-inner .row-desc { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 17px); font-weight: 300; line-height: 1.85; color: var(--text-secondary); }
+  .accordion-body-inner .img-frame { aspect-ratio: 4/3; border-radius: 16px; }
+
+  @media (max-width: 1024px) {
+    .services-split-header { grid-template-columns: 1fr; }
+    .accordion-body-inner { grid-template-columns: 1fr; }
+  }
+
+  /* AWARDS SECTION */
+  .awards-section { padding: var(--section-padding-y) var(--section-padding-x); background: var(--bg-primary); position: relative; overflow: hidden; z-index: 10; perspective: 1400px; }
+  .awards-luxury-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; margin-top: 5rem; }
+  .award-luxury-card { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(201, 169, 110, 0.15); border-radius: 16px; padding: 2.2rem 1.8rem; position: relative; overflow: hidden; transform-style: preserve-3d; }
+  .award-luxury-card:nth-child(odd) { grid-row: span 1; }
+  .award-luxury-card:nth-child(1), .award-luxury-card:nth-child(4) { grid-column: span 2; }
+  .award-glow-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+  .award-year-badge { font-family: var(--font-sans); font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.15em; display: inline-block; margin-bottom: 1.2rem; }
+  .award-title-text { font-family: var(--font-serif); font-size: clamp(1.15rem, 1.7vw, 1.5rem); font-weight: 400; color: var(--text-primary); margin-bottom: 0.6rem; }
+  .award-desc-text { font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  @media (max-width: 1024px) { .awards-luxury-grid { grid-template-columns: repeat(2, 1fr); } .award-luxury-card:nth-child(1), .award-luxury-card:nth-child(4) { grid-column: span 2; } }
+  @media (max-width: 600px) { .awards-luxury-grid { grid-template-columns: 1fr; } .award-luxury-card:nth-child(1), .award-luxury-card:nth-child(4) { grid-column: span 1; } }
+
+  /* PRODUCTS SECTION */
+  .products-section { padding: var(--section-padding-y) var(--section-padding-x); background: var(--bg-white); position: relative; z-index: 10; }
+  .product-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(201, 169, 110, 0.15); border-radius: 16px; padding: 1.5rem; transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1); position: relative; }
+  .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(201, 169, 110, 0.1); border-color: var(--accent); }
+  .product-card:hover .delete-product-btn, .product-card:hover .edit-product-btn { opacity: 1 !important; }
+  .product-img-wrap { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(248, 246, 241, 0.5); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+  .product-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+  .product-card:hover .product-img { transform: scale(1.05); }
+  .product-title { font-family: var(--font-sans); font-size: 13px; font-weight: 400; color: var(--text-primary); line-height: 1.4; margin: 0; flex: 1; }
+  .product-price { font-family: var(--font-serif); font-size: 18px; font-weight: 500; color: var(--accent); white-space: nowrap; }
+  .product-category-badge { display: inline-block; margin-top: 0.8rem; font-family: var(--font-sans); font-size: 9px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); background: rgba(201, 169, 110, 0.08); padding: 0.3rem 0.8rem; border-radius: 20px; }
+  .header-split-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; margin-bottom: 4rem; flex-wrap: wrap; }
+  .product-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .product-form-actions { display: flex; gap: 1rem; align-items: flex-end; }
+  .delete-product-btn { position: absolute; top: 10px; right: 10px; background: rgba(220, 38, 38, 0.9); border: none; border-radius: 50%; width: 28px; height: 28px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; }
+  .delete-product-btn:hover { background: #dc2626; transform: scale(1.1); }
+  .edit-product-btn { position: absolute; top: 10px; right: 46px; background: rgba(37, 99, 235, 0.9); border: none; border-radius: 50%; width: 28px; height: 28px; color: white; cursor: pointer; font-size: 12px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; }
+  .edit-product-btn:hover { background: #2563eb; transform: scale(1.1); }
+  .toast-notification { position: fixed; bottom: 2rem; right: 2rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(201, 169, 110, 0.3); border-radius: 16px; padding: 1rem 2rem; font-family: var(--font-sans); font-size: 14px; color: var(--text-primary); box-shadow: 0 20px 40px rgba(17, 17, 17, 0.1); z-index: 99999; transform: translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.76, 0, 0.24, 1); }
+  .toast-notification.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    .header-split-row { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+    .product-form-grid { grid-template-columns: 1fr; }
+    .product-form-actions { width: 100%; }
+    .product-form-actions button { flex: 1; }
+  }
+
+  /* PROGRESS RAIL */
+  #progress-rail { position: fixed; top: 50%; right: 28px; transform: translateY(-50%); z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .rail-track { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(201, 169, 110, 0.18); transform: translateX(-50%); z-index: 0; }
+  .rail-dot { position: relative; z-index: 1; width: 7px; height: 7px; border-radius: 50%; background: rgba(17,17,17,0.18); cursor: pointer; transition: background 0.4s, transform 0.4s; border: none; padding: 0; }
+  .rail-dot.active { background: var(--accent); transform: scale(1.6); box-shadow: 0 0 8px rgba(201,169,110,0.6); }
+  @media (max-width: 1100px) { #progress-rail { display: none; } }
+
+  /* SECTION WIPE */
+  .section-wipe { clip-path: inset(0 0 100% 0); }
+  .section-wipe.revealed { clip-path: inset(0 0 0% 0); transition: clip-path 1.1s var(--ease-cinematic); }
+
+  /* FOOTER */
+  .luxury-footer { position: relative; padding: var(--section-padding-y) var(--section-padding-x) clamp(30px, 4vw, 50px); background: var(--bg-secondary); border-top: 1px solid rgba(201, 169, 110, 0.25); overflow: hidden; z-index: 10; }
+  .footer-bg-glow { position: absolute; bottom: -20%; left: 50%; transform: translateX(-50%); width: 1000px; height: 500px; background: radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%); filter: blur(120px); pointer-events: none; }
+  .footer-editorial-statement { text-align: center; margin-bottom: 7rem; }
+  .footer-huge-title { --fx: 50%; --fy: 50%; font-family: var(--font-serif); font-size: clamp(2.5rem, 8vw, 8.125rem); font-weight: 300; line-height: 0.95; text-transform: uppercase; margin-bottom: 3rem; background: radial-gradient(circle 360px at var(--fx) var(--fy), var(--accent) 0%, var(--text-primary) 65%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; transition: background 0.05s linear; }
+  .footer-gold-line { width: 80px; height: 1.5px; background: var(--accent); margin: 0 auto; position: relative; }
+  .footer-gold-line::before { content: ''; position: absolute; top: 50%; left: -200px; width: 150px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.25)); }
+  .footer-gold-line::after { content: ''; position: absolute; top: 50%; right: -200px; width: 150px; height: 1px; background: linear-gradient(90deg, rgba(201, 169, 110, 0.25), transparent); }
+  .footer-content-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 3rem; margin-bottom: 6rem; }
+  .footer-card-glass { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(20px); border: 1px solid rgba(201, 169, 110, 0.15); border-radius: 20px; padding: 3rem; transition: transform 0.5s var(--ease-cinematic), border-color 0.5s; }
+  .footer-card-glass:hover { transform: translateY(-5px); border-color: var(--accent); }
+  .footer-card-heading { font-family: var(--font-serif); font-size: 22px; font-weight: 300; color: var(--text-primary); margin-bottom: 2rem; }
+  .footer-email-link, .footer-phone-link { font-family: var(--font-serif); font-size: clamp(20px, 2.2vw, 32px); font-style: italic; color: var(--accent); text-decoration: none; display: block; margin-bottom: 1rem; transition: color 0.3s; }
+  .footer-email-link:hover, .footer-phone-link:hover { color: var(--text-primary); }
+  .footer-address-text { font-family: var(--font-sans); font-size: clamp(15px, 1.1vw, 18px); line-height: 1.8; color: var(--text-secondary); margin-bottom: 2rem; }
+  .studio-map-link { font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: var(--accent); text-decoration: none; transition: letter-spacing 0.3s; }
+  .studio-map-link:hover { letter-spacing: 0.15em; }
+  .socials-glass-list { display: flex; flex-direction: column; gap: 1rem; }
+  .social-glass-btn { font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-primary); text-decoration: none; background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(201, 169, 110, 0.1); padding: 0.8rem 1.5rem; border-radius: 10px; transition: all 0.4s var(--ease-cinematic); display: flex; justify-content: space-between; align-items: center; }
+  .social-glass-btn:hover { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); padding-left: 2rem; }
+  .footer-bottom-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 3rem; border-top: 1px solid rgba(201, 169, 110, 0.15); }
+  .copyright-text { font-family: var(--font-sans); font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em; }
+  .footer-logo-text { font-family: var(--font-serif); font-size: 22px; font-weight: 500; letter-spacing: 0.15em; color: var(--accent); }
+  .footer-policy-links a { font-family: var(--font-sans); font-size: 11px; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+  .footer-policy-links a:hover { color: var(--text-primary); }
+  .policy-divider { color: var(--text-muted); margin: 0 0.5rem; }
+  .footer-social-journey { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 4rem; margin-bottom: 4rem; position: relative; z-index: 5; }
+  .social-journey-label { font-family: var(--font-sans); font-size: 11px; font-weight: 300; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 2.5rem; }
+  .social-journey-icons { display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap; position: relative; padding: 1rem 0; }
+  .social-journey-btn { width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(201, 169, 110, 0.25); display: flex; align-items: center; justify-content: center; color: var(--text-primary); text-decoration: none; transition: all 0.5s var(--ease-cinematic); }
+  .social-journey-btn svg { width: 22px; height: 22px; fill: none; stroke: var(--text-primary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: all 0.5s var(--ease-cinematic); }
+  .social-journey-btn:hover { transform: translateY(-6px) scale(1.1); border-color: var(--accent); background: rgba(255, 255, 255, 0.12); color: var(--accent); }
+  .social-journey-btn:hover svg { stroke: var(--accent); }
+
+  @media (max-width: 1024px) { .footer-content-grid { grid-template-columns: 1fr; gap: 2rem; } }
+  @media (max-width: 768px) {
+    body { cursor: default; }
+    #luxury-cursor, #luxury-cursor-ring, #luxury-cursor-text { display: none !important; }
+    .footer-bottom-bar { flex-direction: column; gap: 2rem; text-align: center; }
+  }
+
+  /* IMAGE FRAME */
+  .img-frame { position: relative; overflow: hidden; background: linear-gradient(110deg, var(--bg-secondary) 8%, #ffffff 18%, var(--bg-secondary) 33%); background-size: 200% 100%; animation: shimmerSkeleton 1.6s linear infinite; }
+  .img-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s var(--ease-cinematic); will-change: opacity; }
+  .img-frame img.loaded { opacity: 1; }
+  .img-frame.is-loaded { animation: none; background: none; }
+  @keyframes shimmerSkeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* CURSOR */
+  #luxury-cursor { position: fixed; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 10010; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background-color 0.3s; }
+  #luxury-cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; pointer-events: none; z-index: 10009; transform: translate(-50%, -50%); transition: width 0.4s var(--ease-cinematic), height 0.4s var(--ease-cinematic), border-color 0.4s, background-color 0.4s; }
+  #luxury-cursor-text { position: fixed; pointer-events: none; z-index: 10011; font-family: var(--font-sans); font-size: 8px; letter-spacing: 0.25em; color: var(--text-primary); text-transform: uppercase; font-weight: 500; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.3s; }
+
+  /* LOGIN MODAL */
+  .login-modal { position: fixed; inset: 0; background: rgba(17, 17, 17, 0.6); backdrop-filter: blur(12px); z-index: 20000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--ease-cinematic), visibility 0.4s var(--ease-cinematic); }
+  .login-modal.open { opacity: 1; visibility: visible; }
+  .login-modal-content { background: rgba(248, 246, 241, 0.96); backdrop-filter: blur(40px); border: 1px solid rgba(201, 169, 110, 0.3); border-radius: 32px; padding: 3rem; width: 90%; max-width: 440px; position: relative; transform: translateY(30px); transition: transform 0.5s var(--ease-cinematic); box-shadow: 0 25px 60px rgba(17, 17, 17, 0.2); }
+  .login-modal.open .login-modal-content { transform: translateY(0); }
+  .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); transition: color 0.3s; }
+  .modal-close:hover { color: var(--accent); }
+  .modal-logo { font-family: var(--font-serif); font-size: 28px; font-weight: 500; letter-spacing: 0.18em; text-align: center; margin-bottom: 0.5rem; background: linear-gradient(120deg, #c9a96e 0%, #111 50%, #c9a96e 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .modal-sub { text-align: center; font-size: 9px; letter-spacing: 0.35em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2rem; }
+  .login-field { margin-bottom: 1.5rem; }
+  .login-field label { display: block; font-size: 9px; letter-spacing: 0.3em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.6rem; }
+  .login-field input { width: 100%; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(201, 169, 110, 0.2); border-radius: 12px; padding: 0.9rem 1.2rem; font-family: var(--font-sans); font-size: 13px; font-weight: 300; color: var(--text-primary); outline: none; transition: border-color 0.3s, box-shadow 0.3s; }
+  .login-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1); }
+  .login-btn { width: 100%; background: var(--accent); border: none; border-radius: 30px; padding: 1rem; font-family: var(--font-sans); font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bg-primary); cursor: pointer; transition: all 0.4s var(--ease-cinematic); margin-top: 1rem; }
+  .login-btn:hover { background: #b8935a; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201, 169, 110, 0.3); }
+  .login-message { text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 1.5rem; }
+  .login-message a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(201, 169, 110, 0.3); }
+
+  /* MOBILE MENU */
+  .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(248, 246, 241, 0.96); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); z-index: 1001; display: flex; align-items: center; justify-content: center; transform: translateY(-100%); transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1); }
+  .mobile-menu-overlay.active { transform: translateY(0); }
+  .mobile-menu-links { display: flex; flex-direction: column; align-items: center; gap: 2.2rem; width: 100%; padding: 2rem; }
+  .mobile-nav-link { font-family: var(--font-serif); font-size: 32px; color: var(--text-primary); text-decoration: none; opacity: 0; transform: translateY(20px); transition: opacity 0.5s var(--ease-cinematic), transform 0.5s var(--ease-cinematic); }
+  .mobile-menu-overlay.active .mobile-nav-link { opacity: 1; transform: translateY(0); }
+  .mobile-nav-link.active { color: var(--accent); }
+  .mobile-nav-link.active::after { content: ' ✦'; color: var(--accent); font-size: 16px; vertical-align: middle; }
+  .mobile-nav-cta { font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--accent); padding: 1.1rem 2.6rem; border-radius: 30px; text-decoration: none; opacity: 0; transform: translateY(20px); transition: opacity 0.5s var(--ease-cinematic), transform 0.5s var(--ease-cinematic); margin-top: 1.5rem; height: 52px; display: flex; align-items: center; justify-content: center; }
+  .mobile-menu-overlay.active .mobile-nav-cta { opacity: 1; transform: translateY(0); }
+
+  .nav-links a.active { color: var(--accent); font-weight: 500; }
+  .nav-links a.active::after { width: 60%; left: 20%; box-shadow: 0 0 8px var(--accent); }
+
+  @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  @media (max-width: 1150px) {
+    .nav-links, .nav-cta { display: none !important; }
+    .nav-hamburger { display: flex !important; }
+    .luxury-navbar { padding: 0 2rem; height: 64px; width: 92%; top: 1rem; }
+    .nav-login-btn { display: flex !important; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Light Effects -->
+<div class="light-effects-container">
+  <div class="sunbeam sunbeam-1"></div>
+  <div class="sunbeam sunbeam-2"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+</div>
+
+<div id="film-grain"></div>
+
+<!-- Preloader -->
+<div id="luxury-loader">
+  <div class="loader-content">
+    <div class="loader-logo">ARCHAUS</div>
+    <div class="loader-progress-bar">
+      <div class="loader-progress-fill"></div>
+    </div>
+    <div class="loader-tag">RESONANCE &amp; SHAPE</div>
+  </div>
+</div>
+
+<!-- Progress Rail -->
+<nav id="progress-rail" aria-label="Section progress">
+  <div class="rail-track"></div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section id="luxury-hero" class="hero-split section-wipe" data-section="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="label-dot"></span>
+      <span class="tag">Est. Studio / Ahmedabad</span>
+    </div>
+    <h1 class="hero-mask-title" id="hero-title">
+      <span class="hero-mask-line" data-line>ARCHITECTURE</span>
+      <span class="hero-mask-line" data-line>THAT <span class="em">DEFINES</span></span>
+      <span class="hero-mask-line" data-line>LUXURY</span>
+    </h1>
+    <p class="hero-editorial-description">
+      Designing structures that stand as sculptural monuments in dialogue with light and time.
+    </p>
+    <div class="hero-cta-group">
+      <a href="#projects" class="luxury-btn btn-primary-glass">Explore Works<span class="btn-shimmer"></span></a>
+      <a href="#about" class="luxury-btn btn-secondary-ghost">Our Vision<span class="btn-arrow">→</span></a>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span class="scroll-text">SCROLL</span>
+      <div class="scroll-line-container"><div class="scroll-line-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-strip down">
+      <div class="hero-strip-track" data-strip>
+        <div class="img-frame">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&q=75&auto=format&fm=webp" alt="Luxury Modern Villa" loading="eager" decoding="async" fetchpriority="high">
+        </div>
+        <div class="img-frame">
+          <img src="https://images.pexels.com/photos/8134821/pexels-photo-8134821.jpeg?auto=compress&cs=tinysrgb&w=480" alt="Glass Architecture" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="img-frame">
+          <img src="https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg" alt="Villa Serena" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+      </div>
+    </div>
+    <div class="hero-strip up">
+      <div class="hero-strip-track" data-strip>
+        <div class="img-frame">
+          <img src="https://images.pexels.com/photos/17639682/pexels-photo-17639682.jpeg" alt="Premium Exterior" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="img-frame">
+          <img src="https://images.pexels.com/photos/7031406/pexels-photo-7031406.jpeg" alt="Casa Blanca" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="img-frame">
+          <img src="https://images.pexels.com/photos/27075286/pexels-photo-27075286.jpeg" alt="The Glass House" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+      </div>
+    </div>
+    <div class="hero-fade-edge"></div>
+    <div class="hero-gold-veil"></div>
+  </div>
+</section>
+
+<!-- ====== MARQUEE ====== -->
+<div class="luxury-marquee">
+  <div class="marquee-track">
+    <span class="txt">Luxury Villas</span><span class="dot">✦</span>
+    <span class="txt">Award-Winning Design</span><span class="dot">✦</span>
+    <span class="txt">Architectural Excellence</span><span class="dot">✦</span>
+    <span class="txt">Premium Interiors</span><span class="dot">✦</span>
+    <span class="txt">Modern Facades</span><span class="dot">✦</span>
+    <span class="txt">Glass Architecture</span><span class="dot">✦</span>
+    <span class="txt">Luxury Villas</span><span class="dot">✦</span>
+    <span class="txt">Award-Winning Design</span><span class="dot">✦</span>
+    <span class="txt">Architectural Excellence</span><span class="dot">✦</span>
+    <span class="txt">Premium Interiors</span><span class="dot">✦</span>
+    <span class="txt">Modern Facades</span><span class="dot">✦</span>
+    <span class="txt">Glass Architecture</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ====== ABOUT ====== -->
+<section id="about" class="about-section section-wipe" data-section="about">
+  <div class="about-pin-wrap">
+    <div class="about-text-pinned">
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">The Practice</span></div>
+      <h2 class="about-editorial-title">Crafting <em class="serif-gold">Legacies</em> Through Raw Space &amp; Light</h2>
+      <p class="about-editorial-p">
+        We are an internationally recognized architectural collective, creating bespoke residences, cultural landmarks, and private estates. Every sketch is a dialogue between the land, the raw materials, and generations yet to come.
+      </p>
+    </div>
+    <div class="about-horiz-viewport">
+      <div class="about-horiz-track" id="aboutTrack">
+        <div class="about-stat-card">
+          <div>
+            <div class="stat-number-wrap"><span class="stat-number" data-target="140">0</span><span class="stat-suffix">+</span></div>
+            <div class="stat-label">Delivered Works</div>
+          </div>
+          <p class="stat-note">Bespoke residences and cultural landmarks completed across twelve capitals.</p>
+        </div>
+        <div class="about-stat-card">
+          <div>
+            <div class="stat-number-wrap"><span class="stat-number" data-target="38">0</span></div>
+            <div class="stat-label">Design Awards</div>
+          </div>
+          <p class="stat-note">Recognized internationally for material innovation and spatial choreography.</p>
+        </div>
+        <div class="about-stat-card">
+          <div>
+            <div class="stat-number-wrap"><span class="stat-number" data-target="15">0</span></div>
+            <div class="stat-label">Years of Mastery</div>
+          </div>
+          <p class="stat-note">Fifteen years collaborating with visionary patrons on enduring architecture.</p>
+        </div>
+        <div class="about-stat-card">
+          <div>
+            <div class="stat-number-wrap"><span class="stat-number" data-target="12">0</span></div>
+            <div class="stat-label">Capitals</div>
+          </div>
+          <p class="stat-note">A global practice rooted in local craft and topography.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PROJECTS ====== -->
+<section id="projects" class="projects-section section-wipe" data-section="projects">
+  <div class="projects-header-wrap">
+    <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Portfolio</span></div>
+    <h2 class="editorial-section-title">Selected <em class="serif-gold">Works</em></h2>
+    <p class="editorial-section-sub">A curated ledger of architectural monuments designed across continents.</p>
+  </div>
+
+  <div class="project-stack" id="projectStack">
+    {% for project in featured_projects %}
+    <div class="project-stack-card">
+      <div class="project-stack-inner" onclick="window.location.href='{% url 'myapp:project_detail' project.slug %}'" style="cursor: pointer;">
+        <div class="img-frame">
+          {% if project.featured_image %}
+            <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy" decoding="async" fetchpriority="low">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1706808849802-8f876ade0d1f?w=480&q=70&auto=format&fm=webp" alt="{{ project.title }}" loading="lazy" decoding="async" fetchpriority="low">
+          {% endif %}
+        </div>
+        <div class="project-stack-scrim"></div>
+        <div class="project-stack-info">
+          <span class="proj-number-editorial">0{{ forloop.counter }}</span>
+          <h3 class="proj-name-mask" data-mask>{{ project.title }}</h3>
+          <div class="proj-meta-row">
+            <span>{{ project.get_category_display }}</span>
+            <span class="accentdot">✦</span>
+            <span>{{ project.location }}</span>
+            <span class="accentdot">✦</span>
+            <span>{{ project.year_completed }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 100px 0; color: var(--text-secondary); width: 100%;">
+      <p style="font-family: var(--font-serif); font-size: 24px; color: var(--accent);">✦</p>
+      <p style="color: var(--text-secondary); margin-top: 12px; font-size: 16px;">No projects available yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====== PHILOSOPHY ====== -->
+<section class="philosophy-section section-wipe" id="philosophy" data-section="philosophy">
+  <div class="philosophy-content">
+    <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Philosophy</span></div>
+    <h2 class="philosophy-statement" id="philosophyQuote">
+      <span class="phrase" data-phrase>"Architecture is the </span><span class="phrase" data-phrase>silent choreography</span><span class="phrase" data-phrase> of human experience</span><span class="phrase" data-phrase> through space and light."</span>
+    </h2>
+    <p class="philosophy-body">
+      We believe every structure carries a responsibility — to the land it occupies, the patrons who inhabit it, and the generations who will inherit it. Our work is guided by this conviction.
+    </p>
+    <div class="signature-wrap"><span class="sig-line"></span><span class="philosophy-sig">Archaus Collective</span></div>
+  </div>
+</section>
+
+<!-- ====== TEXTURE ====== -->
+<section class="texture-section section-wipe" data-section="texture">
+  <div class="texture-header-wrap">
+    <div>
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Materiality</span></div>
+      <h2 class="editorial-section-title" style="margin-top:1rem;">Texture &amp; <em class="serif-gold">Touch</em></h2>
+    </div>
+    <span class="texture-hint">Drag to explore →</span>
+  </div>
+
+  <div class="texture-drag-viewport" id="textureViewport">
+    <div class="texture-drag-track" id="textureTrack">
+      <div class="texture-luxury-item">
+        <div class="img-frame">
+          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&q=70&auto=format&fm=webp" alt="Concrete Staircase" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="texture-label-badge">Staircase &amp; Light Shadow</div>
+      </div>
+      <div class="texture-luxury-item">
+        <div class="img-frame">
+          <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70&auto=format&fm=webp" alt="Oak Millwork" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="texture-label-badge">Refined Oak Millwork</div>
+      </div>
+      <div class="texture-luxury-item">
+        <div class="img-frame">
+          <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=480&q=70&auto=format&fm=webp" alt="Limestone Hearth" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="texture-label-badge">Limestone Hearth Details</div>
+      </div>
+      <div class="texture-luxury-item">
+        <div class="img-frame">
+          <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=480&q=70&auto=format&fm=webp" alt="Brushed Brass Fixtures" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+        <div class="texture-label-badge">Brushed Brass Fixtures</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SERVICES ====== -->
+<section id="services" class="services-section section-wipe" data-section="services">
+  <div class="services-editorial-container">
+    <div class="services-split-header">
+      <div>
+        <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Expertise</span></div>
+        <h2 class="editorial-section-title" style="margin-top:1rem;">Our <em class="serif-gold">Disciplines</em></h2>
+      </div>
+      <p class="services-header-desc">Harmonizing functional geometry and luxury materialism into spatial experiences.</p>
+    </div>
+
+    <div class="accordion-list" id="accordionList">
+      {% for service in services %}
+      <div class="accordion-row {% if forloop.first %}open{% endif %}">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">0{{ forloop.counter }}</span>
+          <span class="row-title">{{ service.title }}</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">{{ service.description }}</p>
+            <div class="img-frame">
+              {% if service.icon_image %}
+                <img src="{{ service.icon_image.url }}" alt="{{ service.title }}" loading="lazy" decoding="async" fetchpriority="low">
+              {% else %}
+                <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="{{ service.title }}" loading="lazy" decoding="async" fetchpriority="low">
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="accordion-row open">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">01</span>
+          <span class="row-title">Architectural Design</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">From primary sketches to final structural handovers, creating iconic volumes that resonate with their topography.</p>
+            <div class="img-frame"><img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Architectural Design" loading="lazy" decoding="async" fetchpriority="low"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-row">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">02</span>
+          <span class="row-title">Interior Architecture</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">Crafting inner worlds that emphasize tactile materiality, custom millwork, and micro-refined proportions.</p>
+            <div class="img-frame"><img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70&auto=format&fm=webp" alt="Interior Architecture" loading="lazy" decoding="async" fetchpriority="low"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-row">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">03</span>
+          <span class="row-title">Master Planning</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">Socio-ecological blueprints for grand scale estates, private islands, and luxury developments.</p>
+            <div class="img-frame"><img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=480&q=70&auto=format&fm=webp" alt="Master Planning" loading="lazy" decoding="async" fetchpriority="low"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-row">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">04</span>
+          <span class="row-title">Facade Engineering</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">Designing sculptural exteriors utilizing raw brass, fluted limestone, and smart glass systems.</p>
+            <div class="img-frame"><img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=480&q=70&auto=format&fm=webp" alt="Facade Engineering" loading="lazy" decoding="async" fetchpriority="low"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-row">
+        <button class="accordion-head" type="button" data-accordion-trigger>
+          <span class="row-num">05</span>
+          <span class="row-title">Lighting &amp; Ambience</span>
+          <span class="accordion-plus">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p class="row-desc">Choreographing dynamic lighting shadows, golden hour light traps, and glowing night facades.</p>
+            <div class="img-frame"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=480&q=70&auto=format&fm=webp" alt="Lighting and Ambience" loading="lazy" decoding="async" fetchpriority="low"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ====== AWARDS ====== -->
+<section id="awards" class="awards-section section-wipe" data-section="awards">
+  <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Laurels</span></div>
+  <h2 class="editorial-section-title" style="margin-top: 1rem;">Architectural <em class="serif-gold">Awards</em></h2>
+
+  <div class="awards-luxury-grid">
+    {% for award in featured_awards %}
+      <div class="award-luxury-card">
+        <div class="award-glow-line"></div>
+        <span class="award-year-badge">{{ award.year }}</span>
+        <h3 class="award-title-text">{{ award.title }}</h3>
+        <p class="award-desc-text">{{ award.organization }}{% if award.location %} ({{ award.location }}){% endif %}</p>
+      </div>
+    {% empty %}
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2024</span><h3 class="award-title-text">Architectural Digest Award</h3><p class="award-desc-text">Best Modern Residential Practice (Tuscany Project)</p></div>
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2024</span><h3 class="award-title-text">RIBA International Award</h3><p class="award-desc-text">Private House of the Year (Casa Blanca)</p></div>
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2023</span><h3 class="award-title-text">Dezeen Architecture Award</h3><p class="award-desc-text">Global Architecture Firm of the Year</p></div>
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2023</span><h3 class="award-title-text">WAN Residential Award</h3><p class="award-desc-text">Best Luxury Villa Concept (The Obsidian)</p></div>
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2022</span><h3 class="award-title-text">AIA Design Merit</h3><p class="award-desc-text">Excellence in Glass &amp; Steel Structures</p></div>
+      <div class="award-luxury-card"><div class="award-glow-line"></div><span class="award-year-badge">2022</span><h3 class="award-title-text">Frame Interior Award</h3><p class="award-desc-text">Best Material Play &amp; Spatial Design</p></div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====== PRODUCTS ====== -->
+<section id="products" class="products-section">
+  <div class="header-split-row">
+    <div>
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Product Collection</span></div>
+      <h2 class="editorial-section-title" style="margin-top:1rem;">Featured <em class="serif-gold">Products</em></h2>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <p class="editorial-section-sub" id="productCount" style="margin: 0;">Loading...</p>
+      <button onclick="fetchProducts()" type="button" style="background: transparent; border: 1px solid rgba(201,169,110,0.3); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; color: var(--accent); font-size: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-sync"></i>
+      </button>
+    </div>
+  </div>
+
+  <div style="text-align: right; margin-bottom: 2rem;">
+    <button onclick="toggleForm()" id="showAddFormBtn" type="button" style="background: var(--accent); border: none; border-radius: 30px; padding: 0.8rem 2rem; color: var(--bg-primary); font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.4s ease;">
+      + Add New Product
+    </button>
+  </div>
+
+  <div id="addProductForm" style="display: none; background: rgba(255,255,255,0.5); backdrop-filter: blur(20px); border: 1px solid rgba(201,169,110,0.2); border-radius: 20px; padding: 2rem; margin-bottom: 3rem; transition: all 0.5s;">
+    <h3 style="font-family: var(--font-serif); font-size: 24px; margin-bottom: 1.5rem;">Add New Product</h3>
+    <form id="productForm" class="product-form-grid">
+      {% csrf_token %}
+      <div>
+        <label style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);">Title *</label>
+        <input type="text" id="productTitle" required style="width:100%; padding: 0.8rem; border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; background: rgba(255,255,255,0.6); font-family: var(--font-sans);">
+      </div>
+      <div>
+        <label style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);">Price *</label>
+        <input type="number" id="productPrice" required step="0.01" style="width:100%; padding: 0.8rem; border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; background: rgba(255,255,255,0.6); font-family: var(--font-sans);">
+      </div>
+      <div>
+        <label style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);">Description</label>
+        <input type="text" id="productDescription" style="width:100%; padding: 0.8rem; border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; background: rgba(255,255,255,0.6); font-family: var(--font-sans);">
+      </div>
+      <div>
+        <label style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);">Image URL</label>
+        <input type="url" id="productImage" style="width:100%; padding: 0.8rem; border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; background: rgba(255,255,255,0.6); font-family: var(--font-sans);">
+      </div>
+      <div>
+        <label style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);">Category</label>
+        <input type="text" id="productCategory" style="width:100%; padding: 0.8rem; border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; background: rgba(255,255,255,0.6); font-family: var(--font-sans);">
+      </div>
+      <div class="product-form-actions">
+        <button type="submit" style="background: var(--accent); border: none; border-radius: 30px; padding: 0.8rem 2rem; color: var(--bg-primary); font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s;">
+          Add Product
+        </button>
+        <button type="button" onclick="toggleForm()" style="background: transparent; border: 1px solid rgba(201,169,110,0.3); border-radius: 30px; padding: 0.8rem 2rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s;">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div id="productGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;">
+    <div style="grid-column: 1/-1; text-align: center; padding: 3rem 0;">
+      <p style="font-family: var(--font-sans); font-size: 13px; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase;">Loading products...</p>
+      <div style="width: 30px; height: 2px; background: var(--accent); margin: 1rem auto; animation: pulse 1.5s infinite;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="luxury-footer" id="contact">
+  <div class="footer-bg-glow"></div>
+
+  <div class="footer-editorial-statement">
+    <h2 class="footer-huge-title" id="footerHeadline">Creating Timeless<br>Architecture</h2>
+    <div class="footer-gold-line"></div>
+  </div>
+
+  <div class="footer-content-grid">
+    <div class="footer-card-glass contact-card">
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Dialogue</span></div>
+      <h3 class="footer-card-heading">Let's craft something lasting</h3>
+      <a href="mailto:studio@archaus.com" class="footer-email-link">studio@archaus.com</a>
+      <a href="tel:+917940123456" class="footer-phone-link">+91 79 4012 3456</a>
+    </div>
+
+    <div class="footer-card-glass address-card">
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">The Studio</span></div>
+      <p class="footer-address-text">
+        ARCHAUS Architecture Studio<br>
+        Sharan Business Hub<br>
+        New Ranip<br>
+        Ahmedabad, Gujarat 382470<br>
+        India
+      </p>
+      <a href="#" class="studio-map-link">View Map Location →</a>
+    </div>
+
+    <div class="footer-card-glass socials-card">
+      <div class="luxury-label-small"><span class="label-dot"></span><span class="label-text">Connections</span></div>
+      <div class="socials-glass-list">
+        <a href="#" class="social-glass-btn"><span>Instagram</span></a>
+        <a href="#" class="social-glass-btn"><span>Dezeen Profile</span></a>
+        <a href="#" class="social-glass-btn"><span>Architectural Digest</span></a>
+        <a href="#" class="social-glass-btn"><span>Journal</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-social-journey">
+    <span class="social-journey-label">FOLLOW OUR JOURNEY</span>
+    <div class="social-journey-icons">
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-journey-btn" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+      </a>
+      <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" class="social-journey-btn" aria-label="Pinterest">
+        <svg viewBox="0 0 24 24"><path d="M8 22c-.5-1.5.1-3.2.4-4.8.3-1.6 1.8-7.5 1.8-7.5s-.5-1-.5-2.4c0-2.2 1.3-3.9 2.9-3.9 1.4 0 2 1 2 2.3 0 1.4-.9 3.5-1.4 5.4-.4 1.6.8 3 2.4 3 2.9 0 5-3.7 5-8.1 0-3.4-2.3-5.9-6.4-5.9-4.7 0-7.6 3.5-7.6 7.4 0 1.4.4 2.4.9 3 .3.3.3.5.2.9l-.3 1.2c-.1.4-.3.5-.7.3-2.4-1-3.5-3.7-3.5-6.7C1.3 4.1 6.1.5 12.4.5c5.1 0 8.4 3.5 8.4 7.6 0 5.2-2.9 9.1-7.2 9.1-1.4 0-2.8-.8-3.2-1.7l-1 3.8c-.3 1.3-1.1 2.6-1.6 3.7z"></path></svg>
+      </a>
+      <a href="https://behance.net" target="_blank" rel="noopener noreferrer" class="social-journey-btn" aria-label="Behance">
+        <svg viewBox="0 0 24 24"><path d="M12 13H5v-2h7v2zm0-4H5V7h7v2zm8.5 2.5c0-1.4-1.1-2.5-2.5-2.5S15.5 10.1 15.5 11.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5zM22 6.5C22 5.1 20.9 4 19.5 4S17 5.1 17 6.5s1.1 2.5 2.5 2.5S22 7.9 22 6.5zM9 17.5c0 .8-.7 1.5-1.5 1.5H2v-15h5.5c.8 0 1.5.7 1.5 1.5v12zM7 8H4v2h3V8zm0 4H4v2h3v-2z"></path></svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-journey-btn" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+      </a>
+      <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-journey-btn" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 11.54a29 29 0 0 0 .46 5.12 2.78 2.78 0 0 0 1.95 1.96C5.12 19.08 12 19.08 12 19.08s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96 29 29 0 0 0 .46-5.12 29 29 0 0 0-.46-5.12z"></path><polygon points="9.75 15.02 15.5 11.54 9.75 8.06 9.75 15.02"></polygon></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-bottom-bar">
+    <p class="copyright-text">© 2026 ARCHAUS. All rights reserved.</p>
+    <div class="footer-logo-text">ARCHAUS</div>
+    <div class="footer-policy-links"><a href="#">Privacy Policy</a><span class="policy-divider">·</span><a href="#">Terms of Use</a></div>
+  </div>
+</footer>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+
+// ============================================================
+// ARCHAUS HOME PAGE — HARDENED / DEFENSIVE VERSION
+// Wrap-around fixes: null-guards, lib-availability checks,
+// DOMContentLoaded gating, safe fetch w/ timeout + content-type check.
+// ============================================================
+
+(function () {
+  'use strict';
+
+  // ---------- Small utilities ----------
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function hasGSAP() { return typeof window.gsap !== 'undefined'; }
+  function hasScrollTrigger() { return hasGSAP() && typeof window.ScrollTrigger !== 'undefined'; }
+  function hasLenis() { return typeof window.Lenis !== 'undefined'; }
+
+  function getCSRFToken() {
+    var el = $('[name=csrfmiddlewaretoken]');
+    return el ? el.value : '';
+  }
+
+  // Fetch with timeout + content-type + status validation
+  function safeFetchJSON(url, options, timeoutMs) {
+    timeoutMs = timeoutMs || 8000;
+    var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = null;
+    var opts = Object.assign({}, options);
+    if (controller) {
+      opts.signal = controller.signal;
+      timer = setTimeout(function () { controller.abort(); }, timeoutMs);
+    }
+
+    return fetch(url, opts)
+      .then(function (response) {
+        if (timer) clearTimeout(timer);
+        var ct = response.headers.get('content-type') || '';
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status + ' for ' + url);
+        }
+        if (ct.indexOf('application/json') === -1) {
+          throw new Error('Expected JSON, got "' + ct + '" from ' + url);
+        }
+        return response.json();
+      })
+      .catch(function (err) {
+        if (timer) clearTimeout(timer);
+        if (err && err.name === 'AbortError') {
+          throw new Error('Request to ' + url + ' timed out after ' + timeoutMs + 'ms');
+        }
+        throw err;
+      });
+  }
+
+  // ---------- LENIS (smooth scroll) ----------
+  var lenisRetries = 0;
+  function initLenis() {
+    if (!hasLenis()) {
+      lenisRetries++;
+      if (lenisRetries > 50) { // ~5s of retrying then give up quietly
+        console.warn('Lenis failed to load after retries — smooth scroll disabled, native scroll used.');
+        return;
+      }
+      setTimeout(initLenis, 100);
+      return;
+    }
+
+    var lenis = new Lenis({
+      duration: 1.4,
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true,
+      wheelMultiplier: 1.1
+    });
+
+    if (hasScrollTrigger()) {
+      gsap.registerPlugin(ScrollTrigger);
+      lenis.on('scroll', ScrollTrigger.update);
+    }
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    if (hasGSAP()) {
+      gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    window.lenis = lenis;
+
+    $all('a[href^="#"]').forEach(function (anchor) {
+      anchor.addEventListener('click', function (e) {
+        var href = this.getAttribute('href');
+        if (href && href !== '#') {
+          var target = $(href);
+          if (target) {
+            e.preventDefault();
+            lenis.scrollTo(target, { offset: -80 });
+          }
+        }
+      });
+    });
+
+    console.log('Lenis initialized');
+  }
+
+  // ---------- HERO CHAR SPLIT ----------
+  function animateHeroChars() {
+    $all('.hero-mask-line').forEach(function (line) {
+      var text = line.textContent;
+      line.innerHTML = '';
+      text.split('').forEach(function (ch) {
+        var span = document.createElement('span');
+        span.className = 'hero-char';
+        span.textContent = ch === ' ' ? '\u00A0' : ch;
+        line.appendChild(span);
+      });
+    });
+    if (hasGSAP()) {
+      gsap.to('.hero-char', { y: '0%', duration: 1.0, stagger: 0.012, ease: 'power4.out' });
+    }
+  }
+
+  // ---------- PRELOADER ----------
+  function initPreloader() {
+    if (!hasGSAP()) {
+      // No GSAP: just hide the loader immediately so the page isn't stuck.
+      var loader = $('#luxury-loader');
+      if (loader) loader.style.display = 'none';
+      animateHeroChars();
+      return;
+    }
+    var tl = gsap.timeline();
+    tl.to('.loader-logo', { opacity: 1, duration: 0.8, ease: 'power2.out' })
+      .to('.loader-progress-fill', { width: '100%', duration: 1.2, ease: 'power1.inOut' }, '-=0.4')
+      .to('.loader-tag', { opacity: 1, duration: 0.6 }, '-=0.8')
+      .to('#luxury-loader', { clipPath: 'inset(0 0 100% 0)', duration: 1.2, ease: 'power4.inOut' })
+      .add(animateHeroChars, '-=0.4')
+      .from('.hero-editorial-description', { opacity: 0, y: 20, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+      .from('.hero-cta-group', { opacity: 0, y: 20, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+      .from('.hero-scroll-indicator', { opacity: 0, y: 15, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+      .from('.hero-right', { opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=1.4');
+  }
+
+  // ---------- NAVBAR SCROLL ----------
+  function initNavbarScroll() {
+    var navbar = $('.luxury-navbar');
+    if (!navbar) return; // guarded — no throw if markup absent
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  }
+
+  // ---------- HAMBURGER / MOBILE MENU ----------
+  function initMobileMenu() {
+    var hamburger = $('.nav-hamburger');
+    var mobileMenu = $('.mobile-menu-overlay');
+    var mobileLinks = $all('.mobile-nav-link, .mobile-nav-cta');
+    if (!hamburger || !mobileMenu) return;
+
+    hamburger.addEventListener('click', function () {
+      var active = hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active', active);
+      mobileLinks.forEach(function (link, i) {
+        link.style.transitionDelay = active ? (i * 0.08) + 's' : '0s';
+      });
+    });
+
+    mobileLinks.forEach(function (link) {
+      link.addEventListener('click', function () {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        mobileLinks.forEach(function (l) { l.style.transitionDelay = '0s'; });
+      });
+    });
+  }
+
+  // ---------- CUSTOM CURSOR ----------
+  function initCustomCursor() {
+    if (!window.matchMedia('(min-width: 769px)').matches) return;
+    var cursor = $('#luxury-cursor');
+    var ring = $('#luxury-cursor-ring');
+    var cursorText = $('#luxury-cursor-text');
+    if (!cursor || !ring || !cursorText) return; // guarded
+
+    document.addEventListener('mousemove', function (e) {
+      if (!hasGSAP()) return;
+      gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.08 });
+      gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.25 });
+      gsap.to(cursorText, { x: e.clientX, y: e.clientY, duration: 0.08 });
+    });
+
+    $all('a, button, .texture-luxury-item, .project-stack-card, .product-card').forEach(function (elem) {
+      elem.addEventListener('mouseenter', function () {
+        if (!hasGSAP()) return;
+        gsap.to(ring, { width: 76, height: 76, backgroundColor: 'rgba(201, 169, 110, 0.12)', borderColor: 'rgba(201, 169, 110, 0.5)', duration: 0.3 });
+        gsap.to(cursor, { scale: 0.4, duration: 0.3 });
+        if (elem.classList.contains('texture-luxury-item') || elem.classList.contains('project-stack-card') || elem.classList.contains('product-card')) {
+          cursorText.textContent = 'VIEW';
+          gsap.to(cursorText, { opacity: 1, duration: 0.3 });
+        }
+      });
+      elem.addEventListener('mouseleave', function () {
+        if (!hasGSAP()) return;
+        gsap.to(ring, { width: 36, height: 36, backgroundColor: 'transparent', borderColor: 'var(--accent)', duration: 0.3 });
+        gsap.to(cursor, { scale: 1, duration: 0.3 });
+        gsap.to(cursorText, { opacity: 0, duration: 0.3 });
+      });
+    });
+  }
+
+  // ---------- MAGNETIC BUTTONS ----------
+  function initMagneticButtons() {
+    $all('.btn-primary-glass, .btn-secondary-ghost, .nav-cta, .social-glass-btn').forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        if (!hasGSAP()) return;
+        var r = el.getBoundingClientRect();
+        gsap.to(el, {
+          x: (e.clientX - r.left - r.width / 2) * 0.35,
+          y: (e.clientY - r.top - r.height / 2) * 0.35,
+          duration: 0.35
+        });
+      });
+      el.addEventListener('mouseleave', function () {
+        if (!hasGSAP()) return;
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'power2.out' });
+      });
+    });
+  }
+
+  // ---------- LOGIN MODAL ----------
+  function initLoginModal() {
+    var loginModal = $('#loginModal');
+    var loginIconBtn = $('#loginIconBtn');
+    var closeModalBtn = $('#closeModalBtn');
+    var loginForm = $('#loginForm');
+    var loginMessage = $('#loginMessage');
+
+    if (!loginModal) return; // nothing to wire up if modal isn't on the page
+
+    function openModal() {
+      loginModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      loginModal.classList.remove('open');
+      document.body.style.overflow = '';
+      if (loginMessage) loginMessage.innerHTML = '';
+    }
+
+    if (loginIconBtn) loginIconBtn.addEventListener('click', openModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+    loginModal.addEventListener('click', function (e) {
+      if (e.target === loginModal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && loginModal.classList.contains('open')) closeModal();
+    });
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var emailEl = $('#loginEmail');
+        var passwordEl = $('#loginPassword');
+        if (!emailEl || !passwordEl) {
+          console.warn('Login form fields missing.');
+          return;
+        }
+        var email = emailEl.value;
+        var password = passwordEl.value;
+
+        if (loginMessage) loginMessage.innerHTML = '<span style="color: var(--accent);">Authenticating...</span>';
+
+        safeFetchJSON('/api/auth/login/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+          body: JSON.stringify({ email: email, password: password })
+        }, 10000)
+          .then(function (data) {
+            if (loginMessage) loginMessage.innerHTML = '<span style="color: green;">Login successful! Redirecting...</span>';
+            setTimeout(function () {
+              var url = (data && data.redirect_url && data.redirect_url.startsWith('/') && !data.redirect_url.startsWith('//'))
+                ? data.redirect_url
+                : '/auth/dashboard/';
+              window.location.href = url;
+            }, 1500);
+          })
+          .catch(function (error) {
+            console.error('Login error:', error);
+            if (loginMessage) loginMessage.innerHTML = '<span style="color: #b02a37;">Invalid credentials or network error.</span>';
+          });
+      });
+    }
+  }
+
+  // ---------- IMAGE LAZY LOAD ----------
+  function initImageLazyLoad() {
+    if (typeof IntersectionObserver === 'undefined') {
+      // Fallback: just reveal everything immediately
+      $all('.img-frame').forEach(function (f) {
+        var img = f.querySelector('img');
+        if (img) { img.classList.add('loaded'); f.classList.add('is-loaded'); }
+      });
+      return;
+    }
+    var imgObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var frame = entry.target;
+        var img = frame.querySelector('img');
+        if (!img) { imgObserver.unobserve(frame); return; }
+        function reveal() {
+          img.classList.add('loaded');
+          frame.classList.add('is-loaded');
+        }
+        if (img.complete && img.naturalWidth > 0) reveal();
+        else img.addEventListener('load', reveal, { once: true });
+        img.addEventListener('error', function () {
+          frame.classList.add('is-loaded'); // stop shimmer even on broken image
+        }, { once: true });
+        imgObserver.unobserve(frame);
+      });
+    }, { rootMargin: '150px 0px' });
+
+    $all('.img-frame').forEach(function (f) { imgObserver.observe(f); });
+  }
+
+  // ---------- GSAP/SCROLLTRIGGER-DEPENDENT VISUALS ----------
+  function initScrollAnimations() {
+    if (!hasScrollTrigger()) {
+      // Fail-soft: reveal all wipe sections immediately so content is never invisible.
+      $all('.section-wipe').forEach(function (el) { el.classList.add('revealed'); });
+      console.warn('GSAP/ScrollTrigger unavailable — scroll animations disabled, content force-revealed.');
+      return;
+    }
+
+    // Hero parallax strips
+    $all('[data-strip]').forEach(function (track, i) {
+      gsap.to(track, {
+        yPercent: i % 2 === 0 ? -20 : -40,
+        ease: 'none',
+        scrollTrigger: { trigger: '#luxury-hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    });
+
+    // About horizontal scroll
+    var aboutTrack = $('#aboutTrack');
+    var aboutSection = $('.about-section');
+    if (aboutTrack && aboutSection && window.matchMedia('(min-width: 1025px)').matches) {
+      function scrollAmount() {
+        return Math.max(aboutTrack.scrollWidth - aboutTrack.parentElement.clientWidth, 0);
+      }
+      ScrollTrigger.create({
+        trigger: aboutSection,
+        start: 'top top',
+        end: function () { return '+=' + scrollAmount(); },
+        pin: true,
+        scrub: 1,
+        invalidateOnRefresh: true,
+        onUpdate: function (self) {
+          aboutTrack.style.transform = 'translateX(-' + (scrollAmount() * self.progress) + 'px)';
+        }
+      });
+    }
+
+    // Stats counter
+    $all('.stat-number').forEach(function (num) {
+      var target = parseInt(num.getAttribute('data-target'), 10);
+      if (isNaN(target)) return;
+      gsap.to(num, {
+        innerText: target,
+        duration: 1.8,
+        snap: { innerText: 1 },
+        scrollTrigger: { trigger: num, start: 'top 88%', toggleActions: 'play none none none' }
+      });
+    });
+
+    // Projects stack
+    $all('.project-stack-card').forEach(function (card, i, all) {
+      var inner = card.querySelector('.project-stack-inner');
+      if (!inner) return;
+      gsap.fromTo(inner, { scale: 0.9 }, {
+        scale: 1,
+        ease: 'none',
+        scrollTrigger: { trigger: card, start: 'top bottom', end: 'top top', scrub: true }
+      });
+      if (i > 0) {
+        var prevCard = all[i - 1];
+        var prevInner = prevCard ? prevCard.querySelector('.project-stack-inner') : null;
+        if (prevInner) {
+          gsap.to(prevInner, {
+            scale: 0.92,
+            filter: 'brightness(0.6)',
+            ease: 'none',
+            scrollTrigger: { trigger: card, start: 'top bottom', end: 'top top', scrub: true }
+          });
+        }
+      }
+    });
+
+    // Project name char split
+    ScrollTrigger.batch('.proj-name-mask', {
+      start: 'top 85%',
+      onEnter: function (els) {
+        els.forEach(function (el) {
+          if (el.dataset.split) return;
+          el.dataset.split = '1';
+          var text = el.textContent;
+          el.innerHTML = '';
+          text.split('').forEach(function (ch) {
+            var s = document.createElement('span');
+            s.className = 'pchar';
+            s.textContent = ch === ' ' ? '\u00A0' : ch;
+            el.appendChild(s);
+          });
+          gsap.to(el.querySelectorAll('.pchar'), { y: '0%', duration: 0.9, stagger: 0.02, ease: 'power4.out' });
+        });
+      },
+      once: true
+    });
+
+    // Philosophy phrase highlight
+    $all('.phrase').forEach(function (phrase) {
+      gsap.to(phrase, {
+        color: 'var(--accent)',
+        ease: 'none',
+        scrollTrigger: { trigger: phrase, start: 'top 75%', end: 'top 40%', scrub: true }
+      });
+    });
+
+    // Awards
+    var awardCards = $all('.award-luxury-card');
+    if (awardCards.length) {
+      gsap.set(awardCards, { transformPerspective: 1000 });
+      ScrollTrigger.batch('.award-luxury-card', {
+        start: 'top 88%',
+        onEnter: function (els) {
+          gsap.from(els, { rotateX: 15, y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out' });
+        },
+        once: true
+      });
+    }
+
+    // Section wipe reveal
+    ScrollTrigger.batch('.section-wipe', {
+      start: 'top 92%',
+      onEnter: function (els) { els.forEach(function (el) { el.classList.add('revealed'); }); },
+      once: true
+    });
+
+    var hero = $('#luxury-hero');
+    if (hero) hero.classList.add('revealed');
+
+    ScrollTrigger.refresh();
+  }
+
+  // ---------- TEXTURE DRAG ----------
+  function initTextureDrag() {
+    var viewport = $('#textureViewport');
+    var track = $('#textureTrack');
+    if (!viewport || !track) return;
+
+    var isDown = false, startX = 0, scrollStart = 0, velocity = 0, lastX = 0, rafId;
+
+    function clampScroll() {
+      var max = track.scrollWidth - viewport.clientWidth + parseFloat(getComputedStyle(viewport).paddingLeft || 0);
+      viewport.scrollLeft = Math.max(0, Math.min(viewport.scrollLeft, max));
+    }
+
+    viewport.addEventListener('pointerdown', function (e) {
+      isDown = true;
+      viewport.classList.add('dragging');
+      startX = e.clientX;
+      lastX = e.clientX;
+      scrollStart = viewport.scrollLeft;
+      velocity = 0;
+      if (rafId) cancelAnimationFrame(rafId);
+    });
+
+    window.addEventListener('pointermove', function (e) {
+      if (!isDown) return;
+      var dx = e.clientX - startX;
+      velocity = e.clientX - lastX;
+      lastX = e.clientX;
+      viewport.scrollLeft = scrollStart - dx;
+    });
+
+    function inertia() {
+      if (Math.abs(velocity) > 0.5) {
+        viewport.scrollLeft -= velocity;
+        velocity *= 0.92;
+        clampScroll();
+        rafId = requestAnimationFrame(inertia);
+      }
+    }
+
+    window.addEventListener('pointerup', function () {
+      if (isDown) {
+        isDown = false;
+        viewport.classList.remove('dragging');
+        inertia();
+      }
+    });
+  }
+
+  // ---------- ACCORDION ----------
+  function initAccordion() {
+    $all('[data-accordion-trigger]').forEach(function (btn) {
+      var row = btn.closest('.accordion-row');
+      if (!row) return;
+      var body = row.querySelector('.accordion-body');
+      var inner = row.querySelector('.accordion-body-inner');
+      if (!body || !inner) return;
+
+      if (row.classList.contains('open')) {
+        requestAnimationFrame(function () { body.style.height = inner.offsetHeight + 'px'; });
+      }
+
+      btn.addEventListener('click', function () {
+        var isOpen = row.classList.contains('open');
+        $all('.accordion-row.open').forEach(function (openRow) {
+          var openBody = openRow.querySelector('.accordion-body');
+          openRow.classList.remove('open');
+          if (openBody) openBody.style.height = '0px';
+        });
+        if (!isOpen) {
+          row.classList.add('open');
+          body.style.height = inner.offsetHeight + 'px';
+        }
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      var openRow = $('.accordion-row.open');
+      if (!openRow) return;
+      var body = openRow.querySelector('.accordion-body');
+      var inner = openRow.querySelector('.accordion-body-inner');
+      if (body && inner) body.style.height = inner.offsetHeight + 'px';
+    });
+  }
+
+  // ---------- FOOTER SPOTLIGHT ----------
+  function initFooterSpotlight() {
+    var footerHeadline = $('#footerHeadline');
+    if (!footerHeadline) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    footerHeadline.addEventListener('mousemove', function (e) {
+      var r = footerHeadline.getBoundingClientRect();
+      footerHeadline.style.setProperty('--fx', ((e.clientX - r.left) / r.width * 100) + '%');
+      footerHeadline.style.setProperty('--fy', ((e.clientY - r.top) / r.height * 100) + '%');
+    });
+  }
+
+  // ---------- PROGRESS RAIL ----------
+  function initProgressRail() {
+    var sections = $all('[data-section]');
+    var rail = $('#progress-rail');
+    if (!rail || !sections.length) return;
+
+    sections.forEach(function (sec) {
+      var dot = document.createElement('button');
+      dot.className = 'rail-dot';
+      dot.type = 'button';
+      dot.setAttribute('aria-label', 'Jump to ' + (sec.dataset.section || 'section'));
+      dot.addEventListener('click', function () {
+        if (window.lenis) {
+          window.lenis.scrollTo(sec, { offset: -40 });
+        } else {
+          sec.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      rail.appendChild(dot);
+
+      if (hasScrollTrigger()) {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: 'top center',
+          end: 'bottom center',
+          onToggle: function (self) { dot.classList.toggle('active', self.isActive); }
+        });
+      }
+    });
+  }
+
+  // ============================================================
+  // PRODUCT API — defensive fetch/render with loading/empty/error states
+  // ============================================================
+  var API_URL = '/api/products/';
+
+  function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return String(text).replace(/[&<>"']/g, function (m) { return map[m]; });
+  }
+
+  function getFormValues() {
+    var titleEl = $('#productTitle');
+    var priceEl = $('#productPrice');
+    var descEl = $('#productDescription');
+    var imageEl = $('#productImage');
+    var categoryEl = $('#productCategory');
+    return {
+      title: titleEl ? titleEl.value.trim() : '',
+      price: priceEl ? parseFloat(priceEl.value) : NaN,
+      description: descEl ? descEl.value.trim() : '',
+      image: (imageEl && imageEl.value.trim()) || 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70&auto=format&fm=webp',
+      category: (categoryEl && categoryEl.value.trim()) || 'uncategorized'
+    };
+  }
+
+  function clearForm() {
+    ['productTitle', 'productPrice', 'productDescription', 'productImage', 'productCategory'].forEach(function (id) {
+      var el = $('#' + id);
+      if (el) el.value = '';
+    });
+  }
+
+  function showToast(message, isError) {
+    var existing = $('.toast-notification');
+    if (existing) existing.remove();
+
+    var toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = message;
+    if (isError) {
+      toast.style.borderColor = '#b02a37';
+      toast.style.borderLeft = '4px solid #b02a37';
+    }
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.classList.add('show'); }, 100);
+    setTimeout(function () {
+      toast.classList.remove('show');
+      setTimeout(function () { toast.remove(); }, 400);
+    }, 3000);
+  }
+
+  function setProductGridState(html) {
+    var grid = $('#productGrid');
+    if (grid) grid.innerHTML = html;
+  }
+
+  function fetchProducts() {
+    var count = $('#productCount');
+
+    setProductGridState(
+      '<div style="grid-column: 1/-1; text-align: center; padding: 3rem 0;">' +
+      '<p style="font-family: var(--font-sans); font-size: 13px; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase;">Loading products...</p>' +
+      '<div style="width: 30px; height: 2px; background: var(--accent); margin: 1rem auto; animation: pulse 1.5s infinite;"></div></div>'
+    );
+
+    safeFetchJSON(API_URL, {}, 8000)
+      .then(function (products) {
+        if (!Array.isArray(products)) {
+          throw new Error('Unexpected response shape from ' + API_URL);
+        }
+        if (count) count.textContent = products.length + ' products';
+        renderProducts(products);
+      })
+      .catch(function (error) {
+        console.error('Error fetching products:', error);
+        setProductGridState(
+          '<div style="grid-column: 1/-1; text-align: center; padding: 3rem 0;">' +
+          '<p style="font-family: var(--font-serif); font-size: 24px; color: var(--accent);">\u2726</p>' +
+          '<p style="font-family: var(--font-sans); font-size: 12px; color: var(--text-muted); margin-top: 0.5rem;">Failed to load products. ' +
+          '<button type="button" onclick="window.fetchProducts && window.fetchProducts()" style="background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:12px;">Retry</button></p></div>'
+        );
+        if (count) count.textContent = 'Failed to load';
+      });
+  }
+
+  function renderProducts(products) {
+    if (products.length === 0) {
+      setProductGridState(
+        '<div style="grid-column: 1/-1; text-align: center; padding: 3rem 0;">' +
+        '<p style="font-family: var(--font-serif); font-size: 20px; color: var(--accent);">\u2726</p>' +
+        '<p style="font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary); margin-top: 0.5rem;">No products available. Add your first product!</p></div>'
+      );
+      return;
+    }
+
+    var html = '';
+    products.forEach(function (product, index) {
+      var safeTitle = escapeHtml(product.title);
+      var safeCategory = escapeHtml(product.category);
+      var safePrice = (typeof product.price === 'number') ? product.price : escapeHtml(product.price);
+      var safeImage = escapeHtml(product.image);
+      var productId = escapeHtml(product.id);
+      var truncatedTitle = safeTitle.length > 40 ? safeTitle.substring(0, 40) + '...' : safeTitle;
+
+      html += '<div class="product-card" data-id="' + productId + '" style="opacity: 0; transform: translateY(30px); animation: fadeInUp 0.6s forwards ' + (index * 0.08) + 's;">';
+      html += '<button class="delete-product-btn" data-id="' + productId + '" title="Delete">\u00D7</button>';
+      html += '<button class="edit-product-btn" data-id="' + productId + '" title="Edit">\u270E</button>';
+      html += '<div class="product-img-wrap">';
+      html += '<img src="' + safeImage + '" alt="' + safeTitle + '" class="product-img" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70&auto=format&fm=webp\'" />';
+      html += '</div>';
+      html += '<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">';
+      html += '<h3 class="product-title">' + truncatedTitle + '</h3>';
+      html += '<span class="product-price">$' + safePrice + '</span>';
+      html += '</div>';
+      if (safeCategory) {
+        html += '<span class="product-category-badge">' + safeCategory + '</span>';
+      }
+      html += '</div>';
+    });
+
+    setProductGridState(html);
+
+    $all('.delete-product-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var id = btn.dataset.id;
+        if (!confirm('Delete this product?')) return;
+        deleteProduct(id);
+      });
+    });
+
+    $all('.edit-product-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        editProduct(btn.dataset.id);
+      });
+    });
+  }
+
+  function addProduct(productData) {
+    safeFetchJSON(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRFToken': getCSRFToken() },
+      body: JSON.stringify(productData)
+    }, 8000)
+      .then(function () {
+        fetchProducts();
+        clearForm();
+        var form = $('#addProductForm');
+        var btn = $('#showAddFormBtn');
+        if (form) form.style.display = 'none';
+        if (btn) btn.textContent = '+ Add New Product';
+        showToast('Product added!');
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+        showToast('Failed to add product', true);
+      });
+  }
+
+  function deleteProduct(id) {
+    safeFetchJSON(API_URL + id + '/', {
+      method: 'DELETE',
+      headers: { 'X-CSRFToken': getCSRFToken() }
+    }, 8000)
+      .then(function () {
+        fetchProducts();
+        showToast('Product deleted!');
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+        showToast('Failed to delete', true);
+      });
+  }
+
+  function editProduct(id) {
+    safeFetchJSON(API_URL + id + '/', {}, 8000)
+      .then(function (product) {
+        var fields = {
+          productTitle: product.title,
+          productPrice: product.price,
+          productDescription: product.description || '',
+          productImage: product.image || '',
+          productCategory: product.category || ''
+        };
+        Object.keys(fields).forEach(function (key) {
+          var el = $('#' + key);
+          if (el) el.value = fields[key];
+        });
+
+        var form = $('#addProductForm');
+        var btn = $('#showAddFormBtn');
+        var productForm = $('#productForm');
+        if (form) {
+          form.style.display = 'block';
+          form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (btn) btn.textContent = '\u270E Editing';
+        if (productForm) {
+          productForm.onsubmit = function (e) {
+            e.preventDefault();
+            updateProduct(id, getFormValues());
+          };
+        }
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+        showToast('Failed to load product', true);
+      });
+  }
+
+  function updateProduct(id, productData) {
+    safeFetchJSON(API_URL + id + '/', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+      body: JSON.stringify(productData)
+    }, 8000)
+      .then(function () {
+        fetchProducts();
+        clearForm();
+        var form = $('#addProductForm');
+        var btn = $('#showAddFormBtn');
+        var productForm = $('#productForm');
+        if (form) form.style.display = 'none';
+        if (btn) btn.textContent = '+ Add New Product';
+        if (productForm) productForm.onsubmit = handleAddSubmit;
+        showToast('Product updated!');
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+        showToast('Failed to update', true);
+      });
+  }
+
+  function toggleForm() {
+    var form = $('#addProductForm');
+    var btn = $('#showAddFormBtn');
+    var productForm = $('#productForm');
+    if (!form || !btn) return;
+
+    if (form.style.display !== 'none') {
+      form.style.display = 'none';
+      btn.textContent = '+ Add New Product';
+      clearForm();
+      if (productForm) productForm.onsubmit = handleAddSubmit;
+    } else {
+      form.style.display = 'block';
+      btn.textContent = '\u2715 Cancel';
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function handleAddSubmit(e) {
+    e.preventDefault();
+    var data = getFormValues();
+    if (!data.title) {
+      showToast('Title is required', true);
+      return;
+    }
+    if (!data.price || isNaN(data.price) || data.price <= 0) {
+      showToast('Valid price is required', true);
+      return;
+    }
+    addProduct(data);
+  }
+
+  // ============================================================
+  // INIT — everything gated behind DOMContentLoaded
+  // ============================================================
+  function init() {
+    initLenis();
+    initNavbarScroll();
+    initMobileMenu();
+    initCustomCursor();
+    initMagneticButtons();
+    initLoginModal();
+    initImageLazyLoad();
+    initScrollAnimations();
+    initTextureDrag();
+    initAccordion();
+    initFooterSpotlight();
+    initProgressRail();
+
+    var productForm = $('#productForm');
+    if (productForm) productForm.onsubmit = handleAddSubmit;
+    fetchProducts();
+
+    // Preloader needs `window.load` since it depends on image/asset weight,
+    // not just DOM parsing — keep it separate from DOMContentLoaded init.
+    window.addEventListener('load', initPreloader);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    // DOM already parsed (e.g. script loaded late/dynamically) — run now.
+    init();
+  }
+
+  // Expose only what inline onclick= handlers in the HTML need.
+  window.fetchProducts = fetchProducts;
+  window.toggleForm = toggleForm;
+
+  console.log('ARCHAUS scripts loaded (hardened mode).');
+})();
+</script>
+{% endblock %}

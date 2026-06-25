@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCHAUS — Studio Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f6f1;
+  --accent:#c9a96e; --tp:#111; --ts:rgba(17,17,17,.6); --tm:rgba(17,17,17,.35);
+  --serif:'Cormorant Garamond',serif; --sans:'Montserrat',sans-serif;
+  --ease:cubic-bezier(0.76,0,0.24,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:var(--sans);font-weight:300;min-height:100vh;overflow-x:hidden;}
+
+.orb{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0;}
+.orb1{width:600px;height:600px;background:rgba(201,169,110,.07);top:-15%;left:-15%;animation:o1 36s alternate infinite ease-in-out;}
+.orb2{width:500px;height:500px;background:rgba(242,238,232,.5);bottom:-10%;right:-10%;animation:o2 28s alternate infinite ease-in-out;}
+@keyframes o1{to{transform:translate(80px,60px);}}
+@keyframes o2{to{transform:translate(-60px,-50px);}}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(248,246,241,.85);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(201,169,110,.12);
+  padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;height:64px;
+}
+.nav-logo{
+  font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.22em;
+  background:linear-gradient(120deg,#c9a96e 0%,#111 30%,#c9a96e 60%,#111 80%,#c9a96e 100%);
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shine 5s linear infinite;
+}
+@keyframes shine{0%{background-position:0% center;}100%{background-position:-200% center;}}
+
+.nav-right{display:flex;align-items:center;gap:2rem;}
+.nav-user{display:flex;align-items:center;gap:.7rem;}
+.nav-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(201,169,110,.2);
+  border:1px solid rgba(201,169,110,.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;color:var(--accent);
+}
+.nav-name{font-size:11px;letter-spacing:.08em;color:var(--ts);}
+.nav-role{font-size:9px;letter-spacing:.15em;color:var(--tm);text-transform:uppercase;}
+.nav-logout{
+  font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--tm);
+  text-decoration:none;border-bottom:1px solid rgba(201,169,110,.2);
+  transition:color .3s,border-color .3s;
+  background:none;border:none;cursor:pointer;padding:0;
+  font-family:var(--sans);font-weight:300;
+}
+.nav-logout:hover{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Dropdown logout option - for the form version */
+.logout-form{display:inline;}
+
+main{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+
+/* MESSAGES */
+.messages{margin-bottom:2rem;}
+.msg{
+  padding:.8rem 1.2rem;border-radius:10px;margin-bottom:.75rem;
+  font-size:12px;letter-spacing:.03em;
+}
+.msg-success{background:rgba(25,135,84,.08);border:1px solid rgba(25,135,84,.2);color:#0f6a3a;}
+.msg-error{background:rgba(220,53,69,.06);border:1px solid rgba(220,53,69,.2);color:#b02a37;}
+
+/* WELCOME */
+.welcome{margin-bottom:3.5rem;}
+.welcome-eyebrow{font-size:9px;letter-spacing:.4em;color:var(--accent);text-transform:uppercase;margin-bottom:.8rem;}
+.welcome-title{font-family:var(--serif);font-size:42px;font-weight:400;color:var(--tp);line-height:1.15;margin-bottom:.75rem;}
+.welcome-title em{font-style:italic;color:var(--accent);}
+.welcome-sub{font-size:12px;letter-spacing:.06em;color:var(--tm);max-width:500px;line-height:1.8;}
+
+.section-divider{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+.section-divider-line{flex:1;height:1px;background:rgba(201,169,110,.15);}
+.section-divider-txt{font-size:9px;letter-spacing:.35em;color:var(--accent);text-transform:uppercase;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-bottom:3.5rem;}
+.stat-card{
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:18px;padding:1.75rem;
+  box-shadow:0 8px 32px rgba(17,17,17,.04);
+  transition:transform .3s var(--ease),box-shadow .3s;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(17,17,17,.07);}
+.stat-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--tm);margin-bottom:1rem;}
+.stat-val{font-family:var(--serif);font-size:36px;font-weight:400;color:var(--tp);line-height:1;margin-bottom:.4rem;}
+.stat-note{font-size:10px;letter-spacing:.05em;color:var(--accent);}
+
+/* QUICK LINKS */
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-bottom:3.5rem;}
+.quick-card{
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:18px;padding:2rem;
+  box-shadow:0 8px 32px rgba(17,17,17,.04);
+  text-decoration:none;display:block;
+  transition:transform .3s var(--ease),box-shadow .3s;
+}
+.quick-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(17,17,17,.08);}
+.quick-icon{
+  width:42px;height:42px;border-radius:12px;
+  background:rgba(201,169,110,.1);
+  border:1px solid rgba(201,169,110,.2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.25rem;font-size:18px;
+}
+.quick-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--tp);margin-bottom:.4rem;}
+.quick-desc{font-size:11px;letter-spacing:.04em;color:var(--tm);line-height:1.7;}
+.quick-arrow{display:inline-block;margin-top:1rem;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);}
+
+/* RECENT */
+.recent-list{
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 8px 32px rgba(17,17,17,.04);
+}
+.recent-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.75rem;border-bottom:1px solid rgba(201,169,110,.08);
+  transition:background .2s;
+}
+.recent-item:last-child{border-bottom:none;}
+.recent-item:hover{background:rgba(201,169,110,.04);}
+.recent-left{display:flex;align-items:center;gap:1rem;}
+.recent-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.3;flex-shrink:0;}
+.recent-dot.active{opacity:1;}
+.recent-name{font-size:13px;letter-spacing:.04em;color:var(--tp);}
+.recent-meta{font-size:10px;letter-spacing:.04em;color:var(--tm);margin-top:.2rem;}
+.recent-badge{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  padding:.3rem .8rem;border-radius:20px;
+  background:rgba(201,169,110,.1);color:var(--accent);border:1px solid rgba(201,169,110,.2);
+}
+.recent-badge.published{background:rgba(25,135,84,.08);color:#0f6a3a;border-color:rgba(25,135,84,.2);}
+
+/* ADMIN SECTION */
+.admin-section{
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(201,169,110,.2);
+  border-radius:18px;padding:2rem;
+  box-shadow:0 8px 32px rgba(17,17,17,.04);
+  margin-bottom:3.5rem;
+}
+.admin-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--tp);margin-bottom:1.5rem;}
+.user-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 0;border-bottom:1px solid rgba(201,169,110,.08);
+}
+.user-row:last-child{border-bottom:none;}
+.user-info{display:flex;align-items:center;gap:.75rem;}
+.user-av{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:500;color:var(--accent);
+}
+.user-name{font-size:12px;letter-spacing:.04em;color:var(--tp);}
+.user-email{font-size:10px;color:var(--tm);}
+.user-role-badge{
+  font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  padding:.25rem .7rem;border-radius:20px;
+  background:rgba(201,169,110,.08);color:var(--accent);border:1px solid rgba(201,169,110,.15);
+}
+.user-role-badge.admin{background:rgba(17,17,17,.06);color:var(--tp);border-color:rgba(17,17,17,.15);}
+
+footer{
+  position:relative;z-index:10;text-align:center;
+  padding:2rem;border-top:1px solid rgba(201,169,110,.1);
+  font-size:10px;letter-spacing:.1em;color:var(--tm);
+}
+
+/* Logout button styling for AJAX version */
+.logout-btn-ajax {
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:9px;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  color:var(--tm);
+  border-bottom:1px solid rgba(201,169,110,.2);
+  transition:color .3s,border-color .3s;
+  font-family:var(--sans);
+  font-weight:300;
+  padding:0;
+}
+.logout-btn-ajax:hover {
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav>
+  <div class="nav-logo">ARCHAUS</div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar">{{ user.full_name|slice:":1"|upper }}{{ user.full_name|slice:"1:"|cut:" "|slice:":1"|upper }}</div>
+      <div>
+        <div class="nav-name">{{ user.full_name }}</div>
+        <div class="nav-role">{{ user.role }}</div>
+      </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- OPTION 1: STANDARD FORM-BASED LOGOUT (SECURE) -->
+    <!-- ============================================ -->
+    <form method="post" action="/auth/logout/" class="logout-form">
+      {% csrf_token %}
+      <button type="submit" class="nav-logout">Sign Out</button>
+    </form>
+
+    <!-- ============================================ -->
+    <!-- OPTION 2: AJAX LOGOUT (COMMENTED OUT BY DEFAULT) -->
+    <!-- ============================================ -->
+    <!--
+    <button type="button" class="logout-btn-ajax" id="logoutAjaxBtn">Sign Out</button>
+    -->
+  </div>
+</nav>
+
+<main>
+
+  {% if messages %}
+  <div class="messages">
+    {% for msg in messages %}
+      <div class="msg {% if msg.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <section class="welcome">
+    <p class="welcome-eyebrow">Studio Dashboard</p>
+    <h1 class="welcome-title">Welcome back,<br><em>{{ user.full_name|truncatewords:1 }}.</em></h1>
+    <p class="welcome-sub">Your studio workspace is ready. Review active projects, manage content, or update your profile.</p>
+  </section>
+
+  <!-- STATS -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <span class="section-divider-txt">Overview</span>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <p class="stat-label">Published Projects</p>
+      <p class="stat-val">{{ stats.active_projects }}</p>
+      <p class="stat-note">Live on site</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Active Users</p>
+      <p class="stat-val">{{ stats.total_users }}</p>
+      <p class="stat-note">Studio members</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Your Role</p>
+      <p class="stat-val" style="font-size:24px;margin-top:.4rem;">{{ user.get_role_display }}</p>
+      <p class="stat-note">{% if user.is_admin %}Full access{% else %}Editor access{% endif %}</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Member Since</p>
+      <p class="stat-val" style="font-size:24px;margin-top:.4rem;">{{ user.created_at|date:"M Y" }}</p>
+      <p class="stat-note">{{ user.email }}</p>
+    </div>
+  </div>
+
+  <!-- QUICK ACCESS -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <span class="section-divider-txt">Quick Access</span>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="quick">
+    <a href="/projects/" class="quick-card">
+      <div class="quick-icon">◫</div>
+      <p class="quick-title">Projects</p>
+      <p class="quick-desc">View all published studio projects on the public site.</p>
+      <span class="quick-arrow">Open →</span>
+    </a>
+    <a href="/admin/" class="quick-card">
+      <div class="quick-icon">◈</div>
+      <p class="quick-title">Admin Panel</p>
+      <p class="quick-desc">Manage projects, gallery, team members and site content.</p>
+      <span class="quick-arrow">Open →</span>
+    </a>
+    <a href="/auth/profile/" class="quick-card">
+      <div class="quick-icon">◻</div>
+      <p class="quick-title">My Profile</p>
+      <p class="quick-desc">Update your name, email and change your password.</p>
+      <span class="quick-arrow">Open →</span>
+    </a>
+    {% if user.is_admin %}
+    <a href="/auth/users/" class="quick-card">
+      <div class="quick-icon">◉</div>
+      <p class="quick-title">Manage Users</p>
+      <p class="quick-desc">Add, edit or deactivate studio team member accounts.</p>
+      <span class="quick-arrow">Open →</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- RECENT PROJECTS -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <span class="section-divider-txt">Recent Projects</span>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="recent-list">
+    {% if recent_projects %}
+      {% for project in recent_projects %}
+      <div class="recent-item">
+        <div class="recent-left">
+          <div class="recent-dot {% if project.status == 'published' %}active{% endif %}"></div>
+          <div>
+            <p class="recent-name">{{ project.title }}</p>
+            <p class="recent-meta">{{ project.location|default:"—" }} · Updated {{ project.updated_at|timesince }} ago</p>
+          </div>
+        </div>
+        <span class="recent-badge {% if project.status == 'published' %}published{% endif %}">{{ project.status }}</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="recent-item" style="justify-content:center;padding:2.5rem;">
+        <p style="font-size:12px;color:var(--tm);letter-spacing:.08em;">No projects yet — add your first project via the Admin Panel.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ADMIN: ALL USERS -->
+  {% if user.is_admin and all_users %}
+  <div style="margin-top:3.5rem;">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <span class="section-divider-txt">All Users</span>
+      <div class="section-divider-line"></div>
+    </div>
+    <div class="admin-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <p class="admin-title" style="margin-bottom:0;">Studio Members</p>
+        <a href="/auth/users/create/" style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(201,169,110,.3);">+ Add User</a>
+      </div>
+      {% for u in all_users %}
+      <div class="user-row">
+        <div class="user-info">
+          <div class="user-av">{{ u.full_name|slice:":1"|upper }}</div>
+          <div>
+            <p class="user-name">{{ u.full_name }}</p>
+            <p class="user-email">{{ u.email }}</p>
+          </div>
+        </div>
+        <span class="user-role-badge {% if u.is_admin %}admin{% endif %}">{{ u.get_role_display }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+
+<footer>ARCHAUS © 2026 · Authorised Personnel Only</footer>
+
+<!-- ============================================ -->
+<!-- AJAX LOGOUT JAVASCRIPT (OPTION 2) -->
+<!-- ============================================ -->
+<script>
+/**
+ * Helper function to get CSRF token from cookies
+ * Required for AJAX POST requests in Django
+ */
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+/**
+ * OPTION 2: AJAX Logout Function
+ * Uses fetch API to send POST request with CSRF token
+ * This is the more secure, modern approach for single-page app behavior
+ */
+function ajaxLogout() {
+    const csrftoken = getCookie('csrftoken');
+    
+    fetch('/auth/logout/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin', // Important: sends cookies with request
+    })
+    .then(response => {
+        if (response.redirected) {
+            // If server returns a redirect (like to login page)
+            window.location.href = response.url;
+        } else if (response.ok) {
+            // If server returns JSON response
+            return response.json();
+        } else {
+            // Handle error
+            return response.json().then(data => {
+                throw new Error(data.message || 'Logout failed');
+            });
+        }
+    })
+    .then(data => {
+        if (data && data.redirect_url) {
+            window.location.href = data.redirect_url;
+        } else {
+            // Fallback: redirect to login page
+            window.location.href = '/auth/login/';
+        }
+    })
+    .catch(error => {
+        console.error('Logout error:', error);
+        // Fallback: redirect to login page on error
+        window.location.href = '/auth/login/';
+    });
+}
+
+// ============================================
+// OPTION 2: Event listener for AJAX logout button
+// ============================================
+// Uncomment this block if you want to use AJAX logout instead of form
+
+/*
+const logoutBtn = document.getElementById('logoutAjaxBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('Are you sure you want to sign out?')) {
+            ajaxLogout();
+        }
+    });
+}
+*/
+
+// ============================================
+// OPTION 1: Form-based logout (already active)
+// The form with method="POST" and {% csrf_token %}
+// is already secure and working in the HTML above
+// ============================================
+
+console.log('✅ Logout options available:');
+console.log('  Option 1: Standard form-based logout (active)');
+console.log('  Option 2: AJAX logout (commented out - uncomment to use)');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,554 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Philosophy — ARCHAUS{% endblock %}
+
+{% block extra_css %}
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-primary': '#f8f6f1',
+            'bg-secondary': '#f2eee8',
+            'bg-white': '#ffffff',
+            'accent': '#c9a96e',
+            'accent-glow': 'rgba(201, 169, 110, 0.15)',
+            'text-primary': '#111111',
+            'text-secondary': 'rgba(17, 17, 17, 0.65)',
+            'text-muted': 'rgba(17, 17, 17, 0.4)',
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          transitionTimingFunction: {
+            cinematic: 'cubic-bezier(0.76, 0, 0.24, 1)',
+          },
+          letterSpacing: {
+            'widest-2': '.25em',
+            'widest-3': '.35em',
+            'widest-4': '.4em',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --radius-card: 24px;
+    }
+    @media (max-width: 768px)  { :root { --radius-card: 18px; } }
+
+    /* ====== ARCHITECTURAL GRID ====== */
+    .architectural-grid { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    .grid-line-v { position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, transparent, rgba(201,169,110,0.06), transparent); }
+    .grid-line-v-1 { left: 12%; } .grid-line-v-2 { left: 50%; } .grid-line-v-3 { left: 88%; }
+    .grid-line-h { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,169,110,0.05), transparent); }
+    .grid-line-h-1 { top: 25%; } .grid-line-h-2 { top: 70%; }
+
+    /* ====== PHILOSOPHY HERO ====== */
+    .philosophy-hero {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      min-height: 500px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      background: #0e0d0c;
+    }
+    .philosophy-hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1800&q=80') center/cover no-repeat;
+      filter: brightness(0.65) saturate(0.8);
+      transform: scale(1.04);
+      transition: transform 10s ease;
+      animation: heroZoom 22s infinite alternate ease-in-out;
+    }
+    @keyframes heroZoom {
+      0% { transform: scale(1.04); }
+      100% { transform: scale(1.15); }
+    }
+    .philosophy-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(14,13,12,0.5) 0%, rgba(14,13,12,0.2) 40%, rgba(248,246,241,0.85) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .philosophy-hero-content {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 1.5rem;
+    }
+    .philosophy-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.6rem, 10vw, 8rem);
+      font-weight: 300;
+      line-height: 0.92;
+      color: #ffffff;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    .philosophy-hero-title .accent-word {
+      color: var(--accent);
+      font-style: italic;
+    }
+    .philosophy-hero-sub {
+      font-family: var(--font-sans);
+      font-size: clamp(14px, 1.2vw, 20px);
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.85);
+      margin-top: 2rem;
+      text-transform: uppercase;
+    }
+    .hero-scroll-indicator {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .8rem;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .scroll-text {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .scroll-line-container {
+      width: 1px;
+      height: 60px;
+      background: rgba(201,169,110,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      transform: translateY(-100%);
+      animation: scrollLineAnimation 2.4s infinite var(--ease-cinematic);
+    }
+    @keyframes scrollLineAnimation {
+      0% { transform: translateY(-100%); }
+      50% { transform: translateY(0); }
+      100% { transform: translateY(100%); }
+    }
+
+    /* ====== MANIFESTO ====== */
+    .manifesto-section {
+      padding: var(--section-padding-y) var(--section-padding-x);
+      background: var(--bg-primary);
+      position: relative;
+      z-index: 10;
+    }
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    .manifesto-label {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-bottom: 1.5rem;
+    }
+    .manifesto-label span {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .dot {
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .manifesto-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 2.5rem;
+    }
+    .manifesto-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .manifesto-text {
+      font-family: var(--font-sans);
+      font-size: clamp(15px, 1.1vw, 18px);
+      font-weight: 300;
+      line-height: 2;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    .manifesto-text::first-letter {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 6vw, 5rem);
+      font-weight: 400;
+      float: left;
+      line-height: .8;
+      margin-right: .8rem;
+      margin-top: .1rem;
+      color: var(--accent);
+    }
+    .manifesto-right {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .manifesto-card {
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(201,169,110,0.12);
+      border-radius: var(--radius-card);
+      padding: 2.8rem;
+      transition: transform .5s var(--ease-cinematic), border-color .5s, box-shadow .5s;
+    }
+    .manifesto-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201,169,110,0.3);
+      box-shadow: 0 20px 50px rgba(201,169,110,0.08);
+    }
+    .manifesto-card-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 300;
+      color: var(--accent);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: .8rem;
+    }
+    .manifesto-card-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      font-weight: 300;
+      color: var(--text-primary);
+      margin-bottom: .8rem;
+    }
+    .manifesto-card-desc {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    /* ====== VALUES ====== */
+    .values-section {
+      padding: var(--section-padding-y) var(--section-padding-x);
+      background: var(--bg-secondary);
+      position: relative;
+      z-index: 10;
+    }
+    .values-heading {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .values-heading span {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .values-heading h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 300;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      margin-top: 1rem;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .value-card {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-card);
+      transition: transform .5s var(--ease-cinematic), border-color .5s, box-shadow .5s;
+    }
+    .value-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(201,169,110,0.3);
+      box-shadow: 0 15px 40px rgba(201,169,110,0.06);
+    }
+    .value-icon {
+      font-size: 2.8rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .value-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 1.5vw, 1.6rem);
+      font-weight: 300;
+      color: var(--text-primary);
+      margin-bottom: .6rem;
+    }
+    .value-desc {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* ====== QUOTE ====== */
+    .philosophy-quote-section {
+      padding: var(--section-padding-y) var(--section-padding-x);
+      background: #0e0d0c;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      overflow: hidden;
+    }
+    .philosophy-quote-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1800&q=80') center/cover no-repeat;
+      opacity: 0.12;
+      filter: brightness(0.5);
+    }
+    .philosophy-quote-wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .philosophy-quote-text {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5.2vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 2rem;
+    }
+    .philosophy-quote-text em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .philosophy-quote-author {
+      font-family: var(--font-serif);
+      font-size: clamp(14px, 1.2vw, 18px);
+      font-style: italic;
+      color: var(--accent);
+      letter-spacing: .1em;
+      display: block;
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 1024px) {
+      .manifesto-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .values-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .values-grid { grid-template-columns: 1fr; }
+      .philosophy-hero { height: 60vh; min-height: 400px; }
+      .manifesto-card { padding: 1.8rem; }
+      .philosophy-hero-title { font-size: clamp(2.8rem, 8vw, 4.5rem); }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- Architectural Grid -->
+  <div class="architectural-grid">
+    <div class="grid-line-v grid-line-v-1"></div>
+    <div class="grid-line-v grid-line-v-2"></div>
+    <div class="grid-line-v grid-line-v-3"></div>
+    <div class="grid-line-h grid-line-h-1"></div>
+    <div class="grid-line-h grid-line-h-2"></div>
+  </div>
+
+  <!-- ====== PHILOSOPHY HERO ====== -->
+  <section class="philosophy-hero" id="philosophy-hero">
+    <div class="philosophy-hero-bg"></div>
+    <div class="philosophy-hero-overlay"></div>
+    <div class="philosophy-hero-content">
+      <h1 class="philosophy-hero-title">
+        <span>Our</span>
+        <span class="accent-word">Philosophy</span>
+      </h1>
+      <p class="philosophy-hero-sub">The principles that guide our practice</p>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span class="scroll-text">Discover</span>
+      <div class="scroll-line-container"><div class="scroll-line-fill"></div></div>
+    </div>
+  </section>
+
+  <!-- ====== MANIFESTO SECTION ====== -->
+  <section class="manifesto-section">
+    <div class="manifesto-grid">
+      <div class="manifesto-left">
+        <div class="manifesto-label">
+          <span class="dot"></span>
+          <span>Manifesto</span>
+        </div>
+        <h2 class="manifesto-title">
+          Architecture is<br>
+          <em>Truth in Material</em>
+        </h2>
+        <p class="manifesto-text">
+          We believe that architecture is not about style — it is about honesty. 
+          Every material, every junction, every shadow speaks. Our work strips 
+          away the superfluous, leaving only what is essential: light, proportion, 
+          and the tectonic language of construction.
+        </p>
+        <p class="manifesto-text">
+          We design spaces that age with grace. A wall that weathers, a timber 
+          that darkens, a stone that holds heat — these are not imperfections 
+          but the patina of time. Architecture, in its truest form, is a 
+          meditation on permanence.
+        </p>
+      </div>
+      <div class="manifesto-right">
+        <div class="manifesto-card reveal">
+          <div class="manifesto-card-number">01</div>
+          <h3 class="manifesto-card-title">Material Honesty</h3>
+          <p class="manifesto-card-desc">We never disguise structure. Concrete remains concrete, timber remains timber. Every joint is an opportunity for expression.</p>
+        </div>
+        <div class="manifesto-card reveal">
+          <div class="manifesto-card-number">02</div>
+          <h3 class="manifesto-card-title">Light as Material</h3>
+          <p class="manifesto-card-desc">We treat light as a physical substance — carving it, filtering it, bouncing it. A space is defined as much by shadow as by illumination.</p>
+        </div>
+        <div class="manifesto-card reveal">
+          <div class="manifesto-card-number">03</div>
+          <h3 class="manifesto-card-title">Tectonic Clarity</h3>
+          <p class="manifesto-card-desc">Every detail is drawn to be read. The connection between two materials should never be hidden — it should be celebrated.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== VALUES SECTION ====== -->
+  <section class="values-section">
+    <div class="values-heading">
+      <span>Core Principles</span>
+      <h2>What We Stand For</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <span class="value-icon"><i class="fa-solid fa-scale-balanced"></i></span>
+        <h3 class="value-title">Proportion</h3>
+        <p class="value-desc">Every element finds its measure. We compose spaces with a rigorous attention to scale and rhythm.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-icon"><i class="fa-solid fa-sun"></i></span>
+        <h3 class="value-title">Natural Light</h3>
+        <p class="value-desc">We orient every plan to capture the sun's arc. Light is the first material we specify.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-icon"><i class="fa-solid fa-tree"></i></span>
+        <h3 class="value-title">Sustainability</h3>
+        <p class="value-desc">We build for the long arc of time — using materials that endure and systems that conserve.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-icon"><i class="fa-solid fa-hand"></i></span>
+        <h3 class="value-title">Craftsmanship</h3>
+        <p class="value-desc">We honour the hand of the maker. Every surface is an invitation to touch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== QUOTE SECTION ====== -->
+  <section class="philosophy-quote-section">
+    <div class="philosophy-quote-wrap">
+      <h2 class="philosophy-quote-text">
+        "A building is not a machine.<br>
+        It is a <em>composition of materials</em>.<br>
+        A <em>dialogue</em> between light and shadow."
+      </h2>
+      <span class="philosophy-quote-author">— ARCHAUS Collective</span>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // Hero reveal
+    gsap.from('.philosophy-hero-title', { opacity: 0, y: 80, duration: 1.6, ease: 'power4.out', delay: 0.2 });
+    gsap.from('.philosophy-hero-sub', { opacity: 0, y: 30, duration: 1.0, ease: 'power3.out', delay: 0.8 });
+    gsap.from('.hero-scroll-indicator', { opacity: 0, y: 20, duration: 1.0, ease: 'power3.out', delay: 1.2 });
+
+    // Reveal animations
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+        opacity: 0,
+        y: 40,
+        duration: 1.1,
+        ease: 'power3.out',
+      });
+    });
+
+    // Value cards staggered reveal
+    gsap.utils.toArray('.value-card').forEach((card, i) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        },
+        opacity: 0,
+        y: 40,
+        duration: 1.1,
+        ease: 'power3.out',
+        delay: i * 0.1,
+      });
+    });
+
+    // Scroll cue fade
+    ScrollTrigger.create({
+      start: 'top+=200 top',
+      onEnter: () => gsap.to('.hero-scroll-indicator', { opacity: 0, duration: 0.5 })
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,1610 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Projects — ARCHAUS{% endblock %}
+{% block loader_tag %}ARCHITECTURAL WORKS{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-primary': '#f8f6f1',
+          'bg-secondary': '#f2eee8',
+          'bg-white': '#ffffff',
+          'accent': '#c9a96e',
+          'accent-glow': 'rgba(201, 169, 110, 0.15)',
+          'text-primary': '#111111',
+          'text-secondary': 'rgba(17, 17, 17, 0.65)',
+          'text-muted': 'rgba(17, 17, 17, 0.4)',
+        },
+        fontFamily: {
+          serif: ['Cormorant Garamond', 'serif'],
+          sans: ['Montserrat', 'sans-serif'],
+        },
+        transitionTimingFunction: {
+          cinematic: 'cubic-bezier(0.76, 0, 0.24, 1)',
+        },
+        letterSpacing: {
+          'widest-2': '.25em',
+          'widest-3': '.35em',
+          'widest-4': '.4em',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  /* HERO */
+  .hero-premium-bleed {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .hero-premium-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://plus.unsplash.com/premium_photo-1764691452224-750b69bcdc0a?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat;
+    filter: brightness(0.78) saturate(0.9);
+    transform: scale(1.04);
+    transition: transform 10s ease;
+    animation: heroZoom 22s infinite alternate ease-in-out;
+  }
+
+  @keyframes heroZoom {
+    0% {
+      transform: scale(1.04);
+    }
+
+    100% {
+      transform: scale(1.18);
+    }
+  }
+
+  .hero-premium-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(248, 246, 241, 0.20) 0%, rgba(17, 17, 17, 0.35) 60%, rgba(248, 246, 241, 0.70) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-premium-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 780px;
+    padding: 0 1.5rem;
+  }
+
+  .hero-premium-title {
+    font-family: var(--font-serif);
+    font-size: clamp(3.6rem, 10vw, 8.5rem);
+    font-weight: 300;
+    line-height: 0.9;
+    color: #f8f6f1;
+    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .hero-premium-title .accent-word {
+    color: #c9a96e;
+    font-style: italic;
+  }
+
+  .hero-premium-sub {
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 1.2vw, 20px);
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 2.2rem;
+    text-transform: uppercase;
+  }
+
+  .hero-scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .scroll-text {
+    font-family: var(--font-sans);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    color: #c9a96e;
+    text-transform: uppercase;
+  }
+
+  .scroll-line-container {
+    width: 1px;
+    height: 60px;
+    background: rgba(201, 169, 110, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-line-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #c9a96e;
+    transform: translateY(-100%);
+    animation: scrollLineAnimation 2.4s infinite var(--ease-cinematic);
+  }
+
+  @keyframes scrollLineAnimation {
+    0% {
+      transform: translateY(-100%);
+    }
+
+    50% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  /* PROJECT GRID */
+  .grid-premium {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 3.5rem 2.2rem;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 6%;
+  }
+
+  .project-card-premium {
+    grid-column: span 6;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.6s var(--ease-cinematic), transform 0.6s var(--ease-cinematic);
+  }
+
+  .project-card-premium:nth-child(4n+1) {
+    grid-column: 1 / 7;
+  }
+
+  .project-card-premium:nth-child(4n+2) {
+    grid-column: 8 / 13;
+    margin-top: 5rem;
+  }
+
+  .project-card-premium:nth-child(4n+3) {
+    grid-column: 1 / 6;
+    margin-top: -2rem;
+  }
+
+  .project-card-premium:nth-child(4n+4) {
+    grid-column: 7 / 13;
+    margin-top: 3rem;
+  }
+
+  .card-img-wrap-premium {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/10;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(17, 17, 17, 0.02);
+    background: #eee;
+  }
+
+  .project-card-premium.vertical .card-img-wrap-premium {
+    aspect-ratio: 4/5;
+  }
+
+  .card-img-premium {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.02);
+    transition: transform 1.8s var(--ease-cinematic);
+  }
+
+  .card-overlay-premium {
+    position: absolute;
+    inset: 0;
+    background: rgba(248, 246, 241, 0.08);
+    backdrop-filter: blur(0px);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-cinematic), backdrop-filter 0.6s;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .card-gold-sweep {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.12), transparent);
+    transform: skewX(-25deg);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .project-card-premium:hover .card-img-premium {
+    transform: scale(1.08);
+  }
+
+  .project-card-premium:hover .card-overlay-premium {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+
+  .project-card-premium:hover .card-gold-sweep {
+    left: 200%;
+    transition: left 1.2s var(--ease-cinematic);
+  }
+
+  .card-details-premium {
+    padding: 0 0.2rem;
+  }
+
+  .card-header-row-premium {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .card-cat-premium {
+    font-family: var(--font-sans);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: #c9a96e;
+    text-transform: uppercase;
+  }
+
+  .card-year-premium {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .card-title-premium {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 2.4vw, 2.8rem);
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1.2;
+    transition: color 0.4s;
+  }
+
+  .project-card-premium:hover .card-title-premium {
+    color: #c9a96e;
+  }
+
+  .card-location-premium {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 0.3rem;
+  }
+
+  .card-tags-premium {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+
+  .card-tag-premium {
+    font-family: var(--font-sans);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid rgba(17, 17, 17, 0.1);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    transition: all 0.3s;
+  }
+
+  .card-tag-premium:hover {
+    border-color: #c9a96e;
+    color: #c9a96e;
+  }
+
+  @media (max-width: 1024px) {
+
+    .project-card-premium,
+    .project-card-premium:nth-child(4n+1),
+    .project-card-premium:nth-child(4n+2),
+    .project-card-premium:nth-child(4n+3),
+    .project-card-premium:nth-child(4n+4) {
+      grid-column: span 6;
+      margin-top: 0 !important;
+    }
+
+    .grid-premium {
+      gap: 3rem 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+
+    .project-card-premium,
+    .project-card-premium:nth-child(4n+1),
+    .project-card-premium:nth-child(4n+2),
+    .project-card-premium:nth-child(4n+3),
+    .project-card-premium:nth-child(4n+4) {
+      grid-column: span 12;
+      margin-top: 0 !important;
+    }
+
+    .grid-premium {
+      gap: 2.5rem 0;
+      padding: 0 5%;
+    }
+  }
+
+  /* FILTER BAR */
+  .filter-section {
+    padding: 40px var(--section-padding-x) 20px;
+    background: var(--bg-primary);
+    position: relative;
+    z-index: 20;
+  }
+
+  .filter-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+    position: relative;
+    padding-bottom: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    padding: .4rem .2rem;
+    transition: color .4s var(--ease-cinematic);
+  }
+
+  .filter-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .filter-btn.active {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .filter-line-indicator {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 1.5px;
+    background: var(--accent);
+    transition: width .5s var(--ease-cinematic), transform .5s var(--ease-cinematic);
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* STATS, PROCESS, MARQUEE */
+  .stat-card {
+    transition: transform .6s cubic-bezier(.76, 0, .24, 1), box-shadow .6s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .stat-number {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .process-row {
+    transition: background-color .5s cubic-bezier(.76, 0, .24, 1);
+  }
+
+  .process-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .7s cubic-bezier(.76, 0, .24, 1), opacity .5s ease;
+    opacity: 0;
+  }
+
+  .process-row.open .process-panel {
+    opacity: 1;
+  }
+
+  .process-row .process-chevron {
+    transition: transform .5s cubic-bezier(.76, 0, .24, 1);
+  }
+
+  .process-row.open .process-chevron {
+    transform: rotate(135deg);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll 38s linear infinite;
+  }
+
+  .marquee-track.reverse {
+    animation-direction: reverse;
+    animation-duration: 46s;
+  }
+
+  @keyframes marqueeScroll {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .marquee-row:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .press-name {
+    -webkit-text-stroke: 1px rgba(17, 17, 17, 0.55);
+    color: transparent;
+    transition: -webkit-text-stroke .4s, color .4s;
+  }
+
+  .press-name:hover {
+    -webkit-text-stroke: 1px var(--accent);
+    color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+
+  /* Interactive Explorer Styles */
+  .dropcap::first-letter {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 5.5vw, 4.5rem);
+    font-weight: 400;
+    float: left;
+    line-height: .82;
+    margin-right: .7rem;
+    margin-top: .15rem;
+    color: var(--accent);
+  }
+
+  .scrollbar-premium::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ===== PROJECT NAV DROPDOWN (NEW — inside dynamic viewport header) ===== */
+  .proj-nav-dropdown {
+    position: relative;
+  }
+
+  .proj-nav-trigger {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: transparent;
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    border-radius: 30px;
+    padding: .55rem 1.1rem;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color .3s, color .3s;
+  }
+
+  .proj-nav-trigger:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .proj-nav-trigger svg {
+    transition: transform .3s var(--ease-cinematic);
+  }
+
+  .proj-nav-dropdown.open .proj-nav-trigger svg {
+    transform: rotate(180deg);
+  }
+
+  .proj-nav-menu {
+    position: absolute;
+    top: calc(100% + .6rem);
+    right: 0;
+    width: 280px;
+    max-height: 320px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid rgba(201, 169, 110, 0.25);
+    border-radius: 16px;
+    padding: .5rem;
+    box-shadow: 0 24px 60px rgba(17, 17, 17, 0.14);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity .3s var(--ease-cinematic), transform .3s var(--ease-cinematic);
+    z-index: 60;
+  }
+
+  .proj-nav-dropdown.open .proj-nav-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .proj-nav-item {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: .75rem .9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .25s;
+  }
+
+  .proj-nav-item:hover {
+    background: rgba(201, 169, 110, 0.1);
+  }
+
+  .proj-nav-item.active {
+    background: rgba(201, 169, 110, 0.08);
+  }
+
+  .proj-nav-item-title {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .proj-nav-item.active .proj-nav-item-title {
+    color: var(--accent);
+  }
+
+  .proj-nav-item-meta {
+    font-family: var(--font-sans);
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .proj-nav-menu::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .proj-nav-menu::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .proj-nav-menu {
+      width: 240px;
+    }
+  }
+
+  /* ===== END PROJECT NAV DROPDOWN ===== */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ========== HERO ========== -->
+<section class="hero-premium-bleed" id="premium-hero">
+  <div class="hero-premium-bg"></div>
+  <div class="hero-premium-overlay"></div>
+  <div class="hero-premium-content">
+    <h1 class="hero-premium-title">
+      <span>Selected</span>
+      <span class="accent-word">Works</span>
+    </h1>
+    <p class="hero-premium-sub">A curated archive of built &amp; envisioned</p>
+  </div>
+  <div class="hero-scroll-indicator">
+    <span class="scroll-text">Explore</span>
+    <div class="scroll-line-container">
+      <div class="scroll-line-fill"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FILTER BAR ========== -->
+<section class="filter-section" id="filter-section">
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="residence">Residence</button>
+    <button class="filter-btn" data-filter="commercial">Commercial</button>
+    <button class="filter-btn" data-filter="atelier">Atelier</button>
+    <button class="filter-btn" data-filter="cultural">Cultural</button>
+    <span class="filter-line-indicator"></span>
+  </div>
+
+  <!-- Premium Custom Select Dropdown -->
+  <div class="flex justify-center items-center mt-8">
+    <div class="relative w-72 md:w-80 group">
+      <button id="project-selector-trigger"
+        class="w-full flex items-center justify-between px-6 py-3.5 bg-bg-secondary border border-accent/20 hover:border-accent/60 rounded-full font-sans text-[10px] tracking-wider uppercase text-text-muted hover:text-text-primary transition-all duration-300 shadow-sm">
+        <span id="selected-project-label" class="text-text-muted">Quick Project Browser</span>
+        <svg class="w-3 h-3 text-accent transition-transform duration-300" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div id="project-selector-dropdown"
+        class="absolute left-0 right-0 mt-2 py-2 bg-bg-secondary border border-accent/20 rounded-2xl shadow-xl max-h-60 overflow-y-auto hidden z-30 transition-all duration-300 opacity-0 transform translate-y-[-10px] scrollbar-premium">
+        <div
+          class="px-4 py-2 text-[9px] tracking-widest text-accent uppercase font-semibold border-b border-text-primary/5">
+          Select a Project</div>
+        {% for p in all_projects %}
+        <button
+          class="project-option w-full text-left px-5 py-2.5 font-sans text-[10px] tracking-wider uppercase text-text-secondary hover:text-accent hover:bg-accent-glow transition-all duration-200"
+          data-slug="{{ p.slug }}">
+          {{ p.title }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROJECT GRID ========== -->
+<!-- FIX 1: Changed loop variable from 'p' to 'project' to match context -->
+<section style="background:var(--bg-primary);position:relative;z-index:10;padding:60px 0 120px;">
+  <div class="grid-premium" id="project-grid-premium">
+    {% for project in projects %}
+    <a href="{% url 'myapp:project_detail' project.slug %}"
+      class="project-card-premium {% if forloop.counter|divisibleby:2 %}vertical{% endif %}"
+      data-category="{{ project.category|default:'residence'|lower }}" data-slug="{{ project.slug }}">
+      <div class="card-img-wrap-premium">
+        {% if project.featured_image %}
+        <img class="card-img-premium" src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy" />
+        {% else %}
+        <img class="card-img-premium"
+          src="https://images.unsplash.com/photo-1633354747567-e0682586f082?q=80&w=1937&auto=format&fit=crop"
+          alt="{{ project.title }}" loading="lazy" />
+        {% endif %}
+        <div class="card-overlay-premium"></div>
+        <div class="card-gold-sweep"></div>
+      </div>
+      <div class="card-details-premium">
+        <div class="card-header-row-premium">
+          <span class="card-cat-premium">{{ project.get_category_display|default:"Residence" }}</span>
+          <!-- FIX 1: Using correct field name - check your model for actual field name -->
+          <span class="card-year-premium">{{ project.year_completed|default:"—" }}</span>
+        </div>
+        <h3 class="card-title-premium">{{ project.title }}</h3>
+        <p class="card-location-premium">{{ project.location|default:"Location TBD" }}</p>
+        <div class="card-tags-premium">
+          {% for tag in project.tags.all|slice:":3" %}
+          <span class="card-tag-premium">{{ tag.name }}</span>
+          {% empty %}
+          <span class="card-tag-premium">Architecture</span>
+          <span class="card-tag-premium">Design</span>
+          {% endfor %}
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div style="grid-column:1/-1; text-align:center; padding:4rem 0;">
+      <p style="font-family:var(--font-serif); font-size:2rem; color:var(--text-muted);">No projects available yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====== DYNAMIC PROJECT DETAILS VIEWPORT ====== -->
+<section id="dynamic-project-viewport" class="hidden relative z-20 py-20 bg-bg-primary border-t border-accent/20">
+  <div class="max-w-[1400px] mx-auto px-[6%] md:px-[8%]">
+    <!-- Dynamic Viewport Header -->
+    <div class="flex justify-between items-center mb-10 pb-4 border-b border-text-primary/10 flex-wrap gap-4">
+      <div class="flex items-center gap-4">
+        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+        <span class="font-sans text-[10px] font-medium tracking-[0.35em] uppercase text-accent">Active
+          Exploration</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- ===== PROJECT NAV DROPDOWN (NEW) ===== -->
+        <div class="proj-nav-dropdown" id="proj-nav-dropdown">
+          <button type="button" class="proj-nav-trigger" id="proj-nav-trigger">
+            <span>Jump to Another Project</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="12" height="12">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="proj-nav-menu" id="proj-nav-menu">
+            {% for p in all_projects %}
+            <button type="button" class="proj-nav-item" data-slug="{{ p.slug }}">
+              <span class="proj-nav-item-title">{{ p.title }}</span>
+              <span class="proj-nav-item-meta">{{ p.location|default:"" }}{% if p.year_completed %} · {{
+                p.year_completed }}{% endif %}</span>
+            </button>
+            {% empty %}
+            <span class="proj-nav-item-meta" style="padding:.75rem .9rem;display:block;">No projects available</span>
+            {% endfor %}
+          </div>
+        </div>
+        <!-- ===== END PROJECT NAV DROPDOWN ===== -->
+        <button id="close-viewport-btn"
+          class="font-sans text-[10px] tracking-widest text-text-muted hover:text-accent uppercase transition-all duration-300 flex items-center gap-2">
+          Close Explorer
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Viewport dynamic content container -->
+    <div id="viewport-content" class="transition-all duration-500"></div>
+  </div>
+</section>
+
+<!-- ====== DYNAMIC LIGHTBOX ====== -->
+<div id="dynamic-lightbox"
+  class="fixed inset-0 bg-black/95 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center transition-opacity duration-500 opacity-0">
+  <button id="lb-close-btn"
+    class="absolute top-6 right-6 w-10 h-10 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-white hover:bg-accent hover:border-accent transition-all duration-300">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+
+  <button id="lb-prev-btn"
+    class="absolute left-6 w-12 h-12 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-white hover:bg-accent hover:border-accent transition-all duration-300">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+    </svg>
+  </button>
+
+  <button id="lb-next-btn"
+    class="absolute right-6 w-12 h-12 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-white hover:bg-accent hover:border-accent transition-all duration-300">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+  </button>
+
+  <div class="max-w-[85vw] max-h-[75vh] flex flex-col items-center">
+    <img id="lb-img-element" src=""
+      class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl transition-all duration-300">
+    <p id="lb-caption-element" class="font-sans text-[10px] text-accent tracking-widest uppercase mt-4"></p>
+  </div>
+  <div id="lb-counter-element" class="absolute bottom-6 font-serif text-sm italic text-white/50"></div>
+</div>
+
+<!-- ====== STATS BAND ====== -->
+<!-- FIX 2: Enhanced stats counter with proper animation -->
+<section class="bg-text-primary relative z-10 py-24 md:py-32 px-[6%] md:px-[8%] overflow-hidden" id="stats-band">
+  <div class="absolute inset-0 pointer-events-none opacity-[0.04]"
+    style="background-image: linear-gradient(rgba(201,169,110,1) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,1) 1px, transparent 1px); background-size: 64px 64px;">
+  </div>
+  <div class="max-w-[1400px] mx-auto relative">
+    <div class="flex flex-col items-center text-center mb-16 md:mb-20">
+      <span class="font-sans text-[10px] font-medium tracking-[.35em] uppercase text-accent mb-4">By the Numbers</span>
+      <h2 class="font-serif text-[clamp(2rem,4.5vw,3.6rem)] font-light text-bg-white uppercase leading-tight">A Practice
+        Measured in Decades</h2>
+    </div>
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-[28px] overflow-hidden">
+      <div class="stat-card group bg-text-primary px-6 py-12 md:py-16 flex flex-col items-center text-center">
+        <span class="stat-number font-serif text-[clamp(2.6rem,5vw,4.6rem)] font-light text-bg-white leading-none"
+          data-target="27" data-suffix="" data-prefix="">00</span>
+        <span class="font-sans text-[10px] tracking-[.2em] uppercase text-white/45 mt-4">Years in Practice</span>
+      </div>
+      <div class="stat-card group bg-text-primary px-6 py-12 md:py-16 flex flex-col items-center text-center">
+        <span class="stat-number font-serif text-[clamp(2.6rem,5vw,4.6rem)] font-light text-accent leading-none"
+          data-target="184" data-suffix="" data-prefix="">00</span>
+        <span class="font-sans text-[10px] tracking-[.2em] uppercase text-white/45 mt-4">Projects Completed</span>
+      </div>
+      <div class="stat-card group bg-text-primary px-6 py-12 md:py-16 flex flex-col items-center text-center">
+        <span class="stat-number font-serif text-[clamp(2.6rem,5vw,4.6rem)] font-light text-bg-white leading-none"
+          data-target="2.4" data-suffix="M" data-prefix="">00</span>
+        <span class="font-sans text-[10px] tracking-[.2em] uppercase text-white/45 mt-4">Sq Ft Designed</span>
+      </div>
+      <div class="stat-card group bg-text-primary px-6 py-12 md:py-16 flex flex-col items-center text-center">
+        <span class="stat-number font-serif text-[clamp(2.6rem,5vw,4.6rem)] font-light text-accent leading-none"
+          data-target="19" data-suffix="" data-prefix="">00</span>
+        <span class="font-sans text-[10px] tracking-[.2em] uppercase text-white/45 mt-4">International Awards</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PROCESS ACCORDION ====== -->
+<section class="bg-bg-primary relative z-10 py-24 md:py-[120px] px-[6%] md:px-[8%]" id="process-accordion">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="flex flex-col items-center text-center mb-16 md:mb-20">
+      <span class="font-sans text-[10px] font-medium tracking-[.35em] uppercase text-accent mb-4">Methodology</span>
+      <h2 class="font-serif text-[clamp(2.2rem,5vw,4.2rem)] font-light text-text-primary uppercase leading-tight">How a
+        Building is Composed</h2>
+    </div>
+    <div class="border-t border-text-primary/10" id="process-list">
+      <div class="process-row border-b border-text-primary/10" data-index="0">
+        <button type="button"
+          class="process-toggle w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left group">
+          <div class="flex items-center gap-6 md:gap-10">
+            <span
+              class="process-index font-serif text-[clamp(1.8rem,3vw,2.8rem)] font-light text-text-primary/15 group-hover:text-accent leading-none w-[2.2ch]">01</span>
+            <span class="font-serif text-[clamp(1.3rem,2.4vw,2.2rem)] font-light text-text-primary uppercase">Site &amp;
+              Light Analysis</span>
+          </div>
+          <span
+            class="process-chevron flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-accent flex items-center justify-center text-accent text-sm"><i
+              class="fa-solid fa-plus"></i></span>
+        </button>
+        <div class="process-panel pl-[2.8ch] md:pl-[3.6rem] pr-12 md:pr-16">
+          <p class="font-sans text-[13px] md:text-[14px] leading-[1.9] text-text-secondary max-w-[640px] pb-8 md:pb-10">
+            We begin on the land itself — mapping sun path, prevailing wind, topography, and sightlines before a single
+            wall is proposed. This analysis becomes the structural logic that every later decision answers to.</p>
+        </div>
+      </div>
+      <div class="process-row border-b border-text-primary/10" data-index="1">
+        <button type="button"
+          class="process-toggle w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left group">
+          <div class="flex items-center gap-6 md:gap-10">
+            <span
+              class="process-index font-serif text-[clamp(1.8rem,3vw,2.8rem)] font-light text-text-primary/15 group-hover:text-accent leading-none w-[2.2ch]">02</span>
+            <span class="font-serif text-[clamp(1.3rem,2.4vw,2.2rem)] font-light text-text-primary uppercase">Concept
+              Massing</span>
+          </div>
+          <span
+            class="process-chevron flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-accent flex items-center justify-center text-accent text-sm"><i
+              class="fa-solid fa-plus"></i></span>
+        </button>
+        <div class="process-panel pl-[2.8ch] md:pl-[3.6rem] pr-12 md:pr-16">
+          <p class="font-sans text-[13px] md:text-[14px] leading-[1.9] text-text-secondary max-w-[640px] pb-8 md:pb-10">
+            Volumes are sketched and tested in physical and digital models, weighing proportion against program. We
+            iterate on massing until the silhouette earns its presence on the site.</p>
+        </div>
+      </div>
+      <div class="process-row border-b border-text-primary/10" data-index="2">
+        <button type="button"
+          class="process-toggle w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left group">
+          <div class="flex items-center gap-6 md:gap-10">
+            <span
+              class="process-index font-serif text-[clamp(1.8rem,3vw,2.8rem)] font-light text-text-primary/15 group-hover:text-accent leading-none w-[2.2ch]">03</span>
+            <span class="font-serif text-[clamp(1.3rem,2.4vw,2.2rem)] font-light text-text-primary uppercase">Material
+              &amp; Tectonic Detail</span>
+          </div>
+          <span
+            class="process-chevron flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-accent flex items-center justify-center text-accent text-sm"><i
+              class="fa-solid fa-plus"></i></span>
+        </button>
+        <div class="process-panel pl-[2.8ch] md:pl-[3.6rem] pr-12 md:pr-16">
+          <p class="font-sans text-[13px] md:text-[14px] leading-[1.9] text-text-secondary max-w-[640px] pb-8 md:pb-10">
+            Every junction is drawn before it is built. Stone-to-glass, timber-to-concrete — the honesty of a material
+            is protected at the joint, never hidden behind trim.</p>
+        </div>
+      </div>
+      <div class="process-row border-b border-text-primary/10" data-index="3">
+        <button type="button"
+          class="process-toggle w-full flex items-center justify-between gap-6 py-8 md:py-10 text-left group">
+          <div class="flex items-center gap-6 md:gap-10">
+            <span
+              class="process-index font-serif text-[clamp(1.8rem,3vw,2.8rem)] font-light text-text-primary/15 group-hover:text-accent leading-none w-[2.2ch]">04</span>
+            <span
+              class="font-serif text-[clamp(1.3rem,2.4vw,2.2rem)] font-light text-text-primary uppercase">Construction
+              Oversight</span>
+          </div>
+          <span
+            class="process-chevron flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-accent flex items-center justify-center text-accent text-sm"><i
+              class="fa-solid fa-plus"></i></span>
+        </button>
+        <div class="process-panel pl-[2.8ch] md:pl-[3.6rem] pr-12 md:pr-16">
+          <p class="font-sans text-[13px] md:text-[14px] leading-[1.9] text-text-secondary max-w-[640px] pb-8 md:pb-10">
+            Our team remains on site through completion, working alongside craftsmen to ensure the built result matches
+            the precision of the drawing — down to the millimeter.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PRESS MARQUEE ====== -->
+<section class="bg-bg-primary relative z-10 py-20 md:py-28 border-t border-b border-text-primary/8 overflow-hidden"
+  id="press-marquee">
+  <div class="text-center mb-12 md:mb-16 px-[6%]">
+    <span class="font-sans text-[10px] font-medium tracking-[.4em] uppercase text-accent">As Featured In</span>
+  </div>
+  <div class="marquee-row relative">
+    <div class="marquee-track">
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">Dezeen</span>
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">Architectural
+        Digest</span>
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">Wallpaper*</span>
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">ArchDaily</span>
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">Domus</span>
+      <span
+        class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none">Dwell</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">Dezeen</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">Architectural Digest</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">Wallpaper*</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">ArchDaily</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">Domus</span>
+      <span class="press-name font-serif text-[clamp(2rem,5vw,3.6rem)] font-medium uppercase px-10 md:px-14 select-none"
+        aria-hidden="true">Dwell</span>
+    </div>
+  </div>
+  <div class="marquee-row relative mt-6 md:mt-8">
+    <div class="marquee-track reverse">
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none">Design
+        Vanguard 2024</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none">RIBA
+        International 2023</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none">World
+        Architecture Festival</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none">A+Awards
+        — Jury Winner</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none">European
+        Property Awards</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none"
+        aria-hidden="true">Design Vanguard 2024</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none"
+        aria-hidden="true">RIBA International 2023</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none"
+        aria-hidden="true">World Architecture Festival</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none"
+        aria-hidden="true">A+Awards — Jury Winner</span>
+      <span class="font-sans text-[11px] tracking-[.25em] uppercase text-text-muted px-10 md:px-14 select-none"
+        aria-hidden="true">European Property Awards</span>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Preloader hero entrance hooks
+  function pageHeroAnimation(tl) {
+    tl.from('.hero-premium-title', { opacity: 0, y: 80, duration: 1.6, ease: 'power4.out' }, '-=0.2')
+      .from('.hero-premium-sub', { opacity: 0, y: 30, duration: 1.0, ease: 'power3.out' }, '-=0.8')
+      .from('.hero-scroll-indicator', { opacity: 0, y: 20, duration: 1.0, ease: 'power3.out' }, '-=1.0');
+  }
+
+  // ─── SELECTED WORKS CUSTOM CURSOR VIEW OVERLAYS ───
+  if (window.matchMedia('(min-width: 769px)').matches) {
+    const ring = document.getElementById('luxury-cursor-ring');
+    const cur = document.getElementById('luxury-cursor');
+    const curT = document.getElementById('luxury-cursor-text');
+    document.querySelectorAll('.project-card-premium').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        gsap.to(ring, { width: 72, height: 72, backgroundColor: 'rgba(201,169,110,0.10)', borderColor: 'rgba(201,169,110,0.5)', duration: 0.3 });
+        gsap.to(cur, { scale: 0.5, duration: 0.3 });
+        if (curT) {
+          curT.textContent = 'VIEW';
+          gsap.to(curT, { opacity: 1, duration: 0.3 });
+        }
+      });
+      el.addEventListener('mouseleave', () => {
+        gsap.to(ring, { width: 36, height: 36, backgroundColor: 'transparent', borderColor: '#c9a96e', duration: 0.3 });
+        gsap.to(cur, { scale: 1, duration: 0.3 });
+        if (curT) gsap.to(curT, { opacity: 0, duration: 0.3 });
+      });
+    });
+  }
+
+  // project cards scroll reveal
+  gsap.utils.toArray('.project-card-premium').forEach((card, i) => {
+    gsap.from(card, {
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 87%',
+        toggleActions: 'play none none none',
+      },
+      opacity: 0,
+      y: 60,
+      duration: 1.3,
+      ease: 'power3.out',
+      delay: i * 0.08,
+    });
+  });
+
+  // filter logic
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const filterInd = document.querySelector('.filter-line-indicator');
+  const projectCards = document.querySelectorAll('.project-card-premium');
+
+  function positionIndicator(btn) {
+    if (filterInd) {
+      filterInd.style.width = `${btn.offsetWidth}px`;
+      filterInd.style.transform = `translateX(${btn.offsetLeft}px)`;
+    }
+  }
+  if (filterBtns.length) positionIndicator(filterBtns[0]);
+  window.addEventListener('resize', () => {
+    const a = document.querySelector('.filter-btn.active');
+    if (a) positionIndicator(a);
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      positionIndicator(btn);
+      const val = btn.dataset.filter;
+      projectCards.forEach(card => {
+        const cats = (card.dataset.category || '').split(' ');
+        const match = val === 'all' || cats.includes(val);
+        card.style.display = match ? 'flex' : 'none';
+        if (match) {
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1) translateY(0)';
+          }, 50);
+        }
+      });
+      setTimeout(() => ScrollTrigger.refresh(), 650);
+    });
+  });
+
+  // ============================================
+  // FIX 2: Enhanced stats counter with proper animation
+  // ============================================
+  (function initStatsCounter() {
+    const statSection = document.getElementById('stats-band');
+    if (!statSection) return;
+    const numbers = statSection.querySelectorAll('.stat-number');
+    let hasRun = false;
+
+    function animateNumbers() {
+      if (hasRun) return;
+      hasRun = true;
+      numbers.forEach(el => {
+        const target = parseFloat(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        const prefix = el.dataset.prefix || '';
+        const isDecimal = !Number.isInteger(target);
+        const obj = { val: 0 };
+        
+        // Start with "00" displayed
+        el.textContent = prefix + '00' + suffix;
+        
+        gsap.to(obj, {
+          val: target,
+          duration: 2.5,
+          ease: 'power3.out',
+          onUpdate: () => {
+            const displayVal = isDecimal ? obj.val.toFixed(1) : Math.round(obj.val);
+            el.textContent = prefix + displayVal + suffix;
+          }
+        });
+      });
+    }
+
+    // Use IntersectionObserver as backup
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateNumbers();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(statSection);
+
+    // Also use ScrollTrigger
+    ScrollTrigger.create({
+      trigger: statSection,
+      start: 'top 75%',
+      onEnter: animateNumbers,
+      once: true
+    });
+  })();
+
+  // process methodology accordion
+  (function initProcessAccordion() {
+    const rows = document.querySelectorAll('.process-row');
+    if (!rows.length) return;
+
+    function setPanelHeight(row, open) {
+      const panel = row.querySelector('.process-panel');
+      if (!panel) return;
+      panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '0px';
+    }
+
+    rows.forEach(row => {
+      const toggle = row.querySelector('.process-toggle');
+      toggle.addEventListener('click', () => {
+        const isOpen = row.classList.contains('open');
+        rows.forEach(r => { r.classList.remove('open'); setPanelHeight(r, false); });
+        if (!isOpen) {
+          row.classList.add('open');
+          setPanelHeight(row, true);
+        }
+      });
+    });
+
+    rows[0].classList.add('open');
+    setPanelHeight(rows[0], true);
+
+    window.addEventListener('resize', () => {
+      const openRow = document.querySelector('.process-row.open');
+      if (openRow) setPanelHeight(openRow, true);
+    });
+  })();
+
+  // ─── DYNAMIC PROJECT EXPLORER & DROPDOWN ───
+  (function initDynamicProjectExplorer() {
+    const dropdownTrigger = document.getElementById('project-selector-trigger');
+    const dropdownMenu = document.getElementById('project-selector-dropdown');
+    const selectedLabel = document.getElementById('selected-project-label');
+    const dynamicViewport = document.getElementById('dynamic-project-viewport');
+    const viewportContent = document.getElementById('viewport-content');
+    const closeViewportBtn = document.getElementById('close-viewport-btn');
+
+    // Lightbox selectors
+    const dynamicLightbox = document.getElementById('dynamic-lightbox');
+    const lbImg = document.getElementById('lb-img-element');
+    const lbCap = document.getElementById('lb-caption-element');
+    const lbCtr = document.getElementById('lb-counter-element');
+    const lbClose = document.getElementById('lb-close-btn');
+    const lbPrev = document.getElementById('lb-prev-btn');
+    const lbNext = document.getElementById('lb-next-btn');
+
+    // Project nav dropdown selectors
+    const projNavDropdown = document.getElementById('proj-nav-dropdown');
+    const projNavTrigger = document.getElementById('proj-nav-trigger');
+
+    let activeProjectImages = [];
+    let lbCurIndex = 0;
+    let activeSlug = null;
+
+    const categoriesMap = {
+      'residential': 'Residential',
+      'commercial': 'Commercial',
+      'cultural': 'Cultural',
+      'landscape': 'Landscape',
+      'interior': 'Interior',
+      'urban': 'Urban'
+    };
+
+    const statusMap = {
+      'draft': 'Draft',
+      'in_progress': 'In Progress',
+      'completed': 'Completed',
+      'on_hold': 'On Hold'
+    };
+
+    if (dropdownTrigger && dropdownMenu) {
+      dropdownTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !dropdownMenu.classList.contains('hidden');
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+
+      document.addEventListener('click', () => {
+        closeDropdown();
+      });
+
+      function openDropdown() {
+        dropdownMenu.classList.remove('hidden');
+        setTimeout(() => {
+          dropdownMenu.classList.remove('opacity-0', 'translate-y-[-10px]');
+        }, 10);
+        const icon = dropdownTrigger.querySelector('svg');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      }
+
+      function closeDropdown() {
+        dropdownMenu.classList.add('opacity-0', 'translate-y-[-10px]');
+        const icon = dropdownTrigger.querySelector('svg');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+        setTimeout(() => {
+          dropdownMenu.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    // ===== PROJECT NAV DROPDOWN LOGIC =====
+    if (projNavDropdown && projNavTrigger) {
+      projNavTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        projNavDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!projNavDropdown.contains(e.target)) {
+          projNavDropdown.classList.remove('open');
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') projNavDropdown.classList.remove('open');
+      });
+      document.querySelectorAll('.proj-nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const slug = item.dataset.slug;
+          if (!slug) return;
+          loadProjectDetails(slug, true);
+          projNavDropdown.classList.remove('open');
+        });
+      });
+    }
+    // ===== END PROJECT NAV DROPDOWN LOGIC =====
+
+    function updateProjNavActiveState(slug) {
+      document.querySelectorAll('.proj-nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.slug === slug);
+      });
+    }
+
+    function loadProjectDetails(slug, triggerScroll = true) {
+      activeSlug = slug;
+      updateProjNavActiveState(slug);
+
+      dynamicViewport.classList.remove('hidden');
+      viewportContent.style.opacity = '0';
+      viewportContent.style.transform = 'translateY(20px)';
+
+      viewportContent.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-20 gap-4">
+          <div class="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin"></div>
+          <span class="font-sans text-[10px] tracking-widest text-accent uppercase">Retrieving Project Details...</span>
+        </div>
+      `;
+      viewportContent.style.opacity = '1';
+
+      if (triggerScroll) {
+        setTimeout(() => {
+          const targetY = dynamicViewport.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({ top: targetY, behavior: 'smooth' });
+        }, 50);
+      }
+
+      fetch(`/api/projects/${slug}/`)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to load project details');
+          return res.json();
+        })
+        .then(data => {
+          const catName = categoriesMap[data.category] || data.category;
+          activeProjectImages = data.images || [];
+
+          let imagesHtml = '';
+          if (data.images && data.images.length > 0) {
+            imagesHtml = `
+              <div class="mt-20">
+                <div class="flex items-center gap-2 mb-8">
+                  <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                  <span class="font-sans text-[10px] tracking-widest uppercase text-accent">Project Gallery</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  ${data.images.map((img, idx) => `
+                    <div class="dynamic-gal-item relative rounded-2xl overflow-hidden cursor-pointer group shadow-sm aspect-[4/3]" data-index="${idx}">
+                      <img src="${img.image}" 
+                           class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700" 
+                           alt="${img.alt_text || data.title}"
+                           onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1633354747567-e0682586f082?q=80&w=1937&auto=format&fit=crop'">
+                      <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="font-sans text-[10px] text-white tracking-widest uppercase">${img.caption || `View Image ${idx + 1}`}</p>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          const detailsHtml = `
+            <!-- Landscape Cover Image -->
+            <div class="relative w-full aspect-[21/9] rounded-[24px] overflow-hidden mb-12 shadow-lg">
+              <img src="${data.featured_image || 'https://images.unsplash.com/photo-1633354747567-e0682586f082?q=80&w=1937&auto=format&fit=crop'}" 
+                   class="w-full h-full object-cover" 
+                   alt="${data.title}"
+                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1633354747567-e0682586f082?q=80&w=1937&auto=format&fit=crop'">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div class="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <h2 class="font-serif text-2xl md:text-4xl lg:text-5xl text-white font-light tracking-wide">${data.title}</h2>
+                  <p class="font-sans text-[10px] text-white/70 tracking-widest uppercase mt-2">${data.location}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  ${data.year_completed ? `<span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full font-sans text-[9px] text-white tracking-widest uppercase">Year: <strong>${data.year_completed}</strong></span>` : ''}
+                  ${data.area_sqft ? `<span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full font-sans text-[9px] text-white tracking-widest uppercase">Area: <strong>${Math.round(data.area_sqft).toLocaleString()} SQ FT</strong></span>` : ''}
+                  <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full font-sans text-[9px] text-white tracking-widest uppercase">Category: <strong>${catName}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Overview & Details Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-16">
+              <div class="lg:col-span-2 flex flex-col gap-6">
+                <div class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                  <span class="font-sans text-[10px] tracking-widest uppercase text-accent">Project Overview</span>
+                </div>
+                <h3 class="font-serif text-2xl md:text-3xl font-light text-text-primary leading-tight">${data.title}<br><em class="text-accent font-light not-italic">${data.location}</em></h3>
+                <p class="font-sans text-xs md:text-sm leading-relaxed text-text-secondary whitespace-pre-line dropcap">
+                  ${data.description}
+                </p>
+              </div>
+              
+              <div class="bg-white border border-accent/15 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-4 self-start">
+                <h4 class="font-sans text-[10px] font-semibold tracking-widest text-text-muted uppercase border-b border-accent/10 pb-3">Project Details</h4>
+                
+                <div class="flex justify-between items-center text-xs border-b border-text-primary/5 py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Location</span>
+                  <span class="font-sans text-text-primary font-medium text-right">${data.location}</span>
+                </div>
+                
+                ${data.year_completed ? `
+                <div class="flex justify-between items-center text-xs border-b border-text-primary/5 py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Year Completed</span>
+                  <span class="font-sans text-accent font-medium text-right">${data.year_completed}</span>
+                </div>
+                ` : ''}
+                
+                ${data.area_sqft ? `
+                <div class="flex justify-between items-center text-xs border-b border-text-primary/5 py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Area</span>
+                  <span class="font-sans text-text-primary font-medium text-right">${Math.round(data.area_sqft).toLocaleString()} Sq Ft</span>
+                </div>
+                ` : ''}
+                
+                ${data.architect ? `
+                <div class="flex justify-between items-center text-xs border-b border-text-primary/5 py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Lead Architect</span>
+                  <span class="font-sans text-text-primary font-medium text-right">${data.architect}</span>
+                </div>
+                ` : ''}
+
+                <div class="flex justify-between items-center text-xs border-b border-text-primary/5 py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Category</span>
+                  <span class="font-sans text-text-primary font-medium text-right">${catName}</span>
+                </div>
+
+                ${data.status ? `
+                <div class="flex justify-between items-center text-xs py-2 gap-2">
+                  <span class="font-sans text-text-muted uppercase tracking-wider text-[10px]">Status</span>
+                  <span class="font-sans text-text-primary font-medium uppercase tracking-wider text-right">${statusMap[data.status] || data.status}</span>
+                </div>
+                ` : ''}
+              </div>
+            </div>
+
+            ${imagesHtml}
+          `;
+
+          viewportContent.innerHTML = detailsHtml;
+
+          // Animate in using GSAP
+          gsap.fromTo(viewportContent,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }
+          );
+
+          if (selectedLabel) {
+            selectedLabel.textContent = data.title;
+            selectedLabel.classList.remove('text-text-muted');
+            selectedLabel.classList.add('text-text-primary');
+          }
+
+          attachDynamicGalleryHandlers();
+        })
+        .catch(err => {
+          console.error(err);
+          viewportContent.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-20 gap-4 text-center">
+              <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+              <span class="font-sans text-xs tracking-widest text-text-secondary uppercase">Failed to retrieve project details. Please try again.</span>
+            </div>
+          `;
+        });
+    }
+
+    // Option Click
+    document.querySelectorAll('.project-option').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slug = opt.dataset.slug;
+        loadProjectDetails(slug, true);
+        closeDropdown();
+      });
+    });
+
+    // Card click handler - improved to handle navigation properly
+    document.querySelectorAll('.project-card-premium').forEach(card => {
+      card.addEventListener('click', function(e) {
+        // If user clicked on the link inside, let it navigate normally
+        if (e.target.closest('a')) {
+          return; // Let the browser handle navigation
+        }
+        
+        const slug = this.dataset.slug;
+        if (slug) {
+          e.preventDefault();
+          loadProjectDetails(slug, true);
+        }
+      });
+    });
+
+    // Close Viewport button
+    if (closeViewportBtn) {
+      closeViewportBtn.addEventListener('click', () => {
+        gsap.to(viewportContent, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power3.in',
+          onComplete: () => {
+            dynamicViewport.classList.add('hidden');
+            if (selectedLabel) {
+              selectedLabel.textContent = 'Quick Project Browser';
+              selectedLabel.classList.add('text-text-muted');
+              selectedLabel.classList.remove('text-text-primary');
+            }
+            activeSlug = null;
+            updateProjNavActiveState(null);
+          }
+        });
+      });
+    }
+
+    // Lightbox handlers
+    function attachDynamicGalleryHandlers() {
+      const items = document.querySelectorAll('.dynamic-gal-item');
+      items.forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = parseInt(item.dataset.index);
+          openDynamicLB(idx);
+        });
+      });
+    }
+
+    function openDynamicLB(idx) {
+      if (idx < 0 || idx >= activeProjectImages.length) return;
+      lbCurIndex = idx;
+
+      const imgData = activeProjectImages[lbCurIndex];
+
+      gsap.to(lbImg, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete() {
+          lbImg.src = imgData.image;
+          lbImg.alt = imgData.alt_text || imgData.caption || 'Project Image';
+          lbCap.textContent = imgData.caption || '';
+          lbCtr.textContent = `${lbCurIndex + 1} / ${activeProjectImages.length}`;
+
+          if (dynamicLightbox.classList.contains('hidden')) {
+            dynamicLightbox.classList.remove('hidden');
+            setTimeout(() => {
+              dynamicLightbox.style.opacity = '1';
+            }, 10);
+            document.body.style.overflow = 'hidden';
+          }
+
+          gsap.to(lbImg, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.45,
+            ease: 'power3.out'
+          });
+        }
+      });
+    }
+
+    function closeDynamicLB() {
+      gsap.to(lbImg, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete() {
+          dynamicLightbox.style.opacity = '0';
+          setTimeout(() => {
+            dynamicLightbox.classList.add('hidden');
+          }, 500);
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    if (lbClose) lbClose.addEventListener('click', closeDynamicLB);
+    if (lbNext) lbNext.addEventListener('click', () => openDynamicLB((lbCurIndex + 1) % activeProjectImages.length));
+    if (lbPrev) lbPrev.addEventListener('click', () => openDynamicLB((lbCurIndex - 1 + activeProjectImages.length) % activeProjectImages.length));
+
+    if (dynamicLightbox) {
+      dynamicLightbox.addEventListener('click', e => {
+        if (e.target === dynamicLightbox) closeDynamicLB();
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      if (dynamicLightbox && !dynamicLightbox.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeDynamicLB();
+        if (e.key === 'ArrowRight') openDynamicLB((lbCurIndex + 1) % activeProjectImages.length);
+        if (e.key === 'ArrowLeft') openDynamicLB((lbCurIndex - 1 + activeProjectImages.length) % activeProjectImages.length);
+      }
+    });
+  })();
+
+  // ============================================
+  // FIX 3: REMOVED Login popup auto-trigger code
+  // No window.onload or auto-trigger for login modal
+  // Login should only be triggered by button click
+  // ============================================
+</script>
+{% endblock %}

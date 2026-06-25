@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} — ARCHAUS Journal{% endblock %}
+
+{% block extra_css %}
+<style>
+  .journal-detail-container { max-width: 900px; margin: 0 auto; padding: 120px 8% 80px; }
+  .journal-back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent); text-decoration: none; font-size: 14px; transition: color 0.3s; }
+  .journal-back-link:hover { color: var(--text-primary); }
+  .journal-hero { margin-bottom: 2rem; }
+  .journal-hero h1 { font-family: var(--font-serif); font-size: clamp(28px, 4vw, 48px); font-weight: 400; margin-bottom: 1rem; }
+  .journal-meta { color: var(--text-muted); font-size: 13px; margin-bottom: 2rem; }
+  .journal-featured-img { width: 100%; height: auto; border-radius: 8px; margin: 2rem 0; }
+  .journal-content { line-height: 1.85; color: var(--text-secondary); font-size: 16px; }
+  .journal-content p { margin-bottom: 1.5rem; }
+  .journal-related { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(201, 169, 110, 0.15); }
+  .journal-related h3 { font-family: var(--font-serif); font-size: 20px; margin-bottom: 1.5rem; }
+  .journal-related-links a { display: block; color: var(--accent); text-decoration: none; margin-bottom: 0.8rem; transition: color 0.3s; }
+  .journal-related-links a:hover { color: var(--text-primary); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="journal-detail-container">
+  <a href="{% url 'myapp:journal' %}" class="journal-back-link">← Back to Journal</a>
+
+  <header class="journal-hero">
+    <h1>{{ article.title }}</h1>
+    <div class="journal-meta">
+      {% if article.author_name %}By {{ article.author_name }} · {% endif %}
+      {{ article.published_date|date:"F j, Y" }} · {{ article.reading_time }} min read
+    </div>
+  </header>
+
+  {% if article.featured_image %}
+    <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" class="journal-featured-img">
+  {% endif %}
+
+  <article class="journal-content">
+    {{ article.content|safe }}
+  </article>
+
+  <section class="journal-related">
+    <h3>Related Articles</h3>
+    <div class="journal-related-links">
+      {% if related %}
+        {% for r in related %}
+          <a href="{% url 'myapp:journal_detail' r.slug %}">{{ r.title }}</a>
+        {% endfor %}
+      {% else %}
+        <p>No related articles available.</p>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

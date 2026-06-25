@@ -1,0 +1,525 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ARCHAUS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f8f6f1;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ============================================
+           PROFILE CONTAINER
+           ============================================ */
+        .profile-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 24px;
+            padding: 50px 45px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(17, 17, 17, 0.08);
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .profile-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 400;
+            color: #111;
+        }
+
+        .profile-header .badge {
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(201, 169, 110, 0.12);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            color: #c9a96e;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            letter-spacing: 0.2em;
+            color: rgba(17, 17, 17, 0.5);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           MESSAGES
+           ============================================ */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .message.error {
+            background: rgba(220, 53, 69, 0.08);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            color: #b02a37;
+        }
+
+        .message.success {
+            background: rgba(25, 135, 84, 0.08);
+            border: 1px solid rgba(25, 135, 84, 0.2);
+            color: #0f6a3a;
+        }
+
+        /* ============================================
+           PROFILE IMAGE SECTION
+           ============================================ */
+        .profile-image-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(201, 169, 110, 0.1);
+        }
+
+        .profile-image-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(201, 169, 110, 0.3);
+            flex-shrink: 0;
+            background: #f0ece6;
+            position: relative;
+        }
+
+        .profile-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-image-wrapper .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        .profile-image-wrapper:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .profile-image-wrapper .image-overlay span {
+            color: white;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .profile-image-upload {
+            flex: 1;
+        }
+
+        .profile-image-upload label {
+            display: inline-block;
+            padding: 10px 24px;
+            background: rgba(201, 169, 110, 0.1);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #111;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .profile-image-upload label:hover {
+            background: rgba(201, 169, 110, 0.2);
+            border-color: #c9a96e;
+            transform: translateY(-1px);
+        }
+
+        .profile-image-upload input[type="file"] {
+            display: none;
+        }
+
+        .profile-image-upload .file-name {
+            font-size: 11px;
+            color: rgba(17, 17, 17, 0.4);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .profile-image-upload .file-hint {
+            font-size: 10px;
+            color: rgba(17, 17, 17, 0.35);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           FORM GROUPS
+           ============================================ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.6);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(201, 169, 110, 0.25);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+            color: #111;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #c9a96e;
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+            background: white;
+        }
+
+        .form-group input:disabled,
+        .form-group input[readonly] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 10px;
+            color: rgba(17, 17, 17, 0.4);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            background: #c9a96e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #b8955a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 169, 110, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: rgba(17, 17, 17, 0.6);
+            border: 1px solid rgba(201, 169, 110, 0.25);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(201, 169, 110, 0.05);
+            border-color: #c9a96e;
+            box-shadow: none;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 640px) {
+            .profile-container {
+                padding: 30px 20px;
+            }
+
+            .profile-image-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-image-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-image-upload {
+                width: 100%;
+            }
+
+            .profile-image-upload label {
+                width: 100%;
+                text-align: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .profile-header h1 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .profile-container {
+                padding: 20px 16px;
+            }
+
+            .profile-image-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* ============================================
+           UTILITY
+           ============================================ */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <!-- HEADER -->
+        <div class="profile-header">
+            <h1>👤 Profile</h1>
+            <span class="badge">{{ user.get_role_display }}</span>
+        </div>
+        <p class="subtitle">{{ user.email }}</p>
+
+        <!-- MESSAGES -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- FORM -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- ==========================================
+                   PROFILE IMAGE SECTION
+                   ========================================== -->
+            <div class="profile-image-section">
+                <div class="profile-image-wrapper">
+                    {% if user.profile_image %}
+                        <img src="{{ user.profile_image.url }}" alt="{{ user.full_name }}">
+                    {% else %}
+                        <img src="/media/profiles/default-avatar.png" alt="Default Avatar">
+                    {% endif %}
+                    <div class="image-overlay">
+                        <span>📸 Change</span>
+                    </div>
+                </div>
+                <div class="profile-image-upload">
+                    <label for="profile_image">📸 Choose Photo</label>
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                    <div class="file-name" id="file-name">No file chosen</div>
+                    <div class="file-hint">Recommended: Square image, max 5MB</div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                   FULL NAME
+                   ========================================== -->
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" 
+                       value="{{ user.full_name|default:'' }}" 
+                       placeholder="Enter your full name">
+            </div>
+
+            <!-- ==========================================
+                   EMAIL (Read-only)
+                   ========================================== -->
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" value="{{ user.email }}" readonly>
+            </div>
+
+            <!-- ==========================================
+                   PHONE
+                   ========================================== -->
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" 
+                       value="{{ user.phone|default:'' }}" 
+                       placeholder="Enter your phone number">
+            </div>
+
+            <!-- ==========================================
+                   BIO
+                   ========================================== -->
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ user.bio|default:'' }}</textarea>
+            </div>
+
+            <!-- ==========================================
+                   PASSWORD SECTION
+                   ========================================== -->
+            <div style="margin-top: 8px; padding-top: 16px; border-top: 1px solid rgba(201, 169, 110, 0.1);">
+                <p style="font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(17,17,17,0.4); margin-bottom: 16px;">
+                    🔐 Change Password
+                </p>
+
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password" 
+                           placeholder="••••••••••••" autocomplete="current-password">
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password" 
+                           placeholder="Leave empty to keep current" autocomplete="new-password">
+                    <div class="form-hint">
+                        Must be at least 12 characters with uppercase, lowercase, number &amp; special character
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                   BUTTONS
+                   ========================================== -->
+            <div class="btn-group">
+                <button type="submit" class="btn">💾 Save Changes</button>
+                <a href="/auth/dashboard/" class="btn btn-secondary">← Dashboard</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ==========================================
+           JAVASCRIPT - File Name Display
+           ========================================== -->
+    <script>
+        document.getElementById('profile_image').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('file-name').textContent = fileName;
+        });
+    </script>
+
+</body>
+</html>

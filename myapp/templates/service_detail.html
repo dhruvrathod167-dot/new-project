@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ service.title }} | ARCHAUS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* ============================================
+       DESIGN TOKENS - MATCHING SITE THEME
+    ============================================ */
+    :root {
+      --bg-primary: #f8f6f1;
+      --bg-secondary: #f2eee8;
+      --bg-white: #ffffff;
+      --accent: #c9a96e;
+      --accent-glow: rgba(201, 169, 110, 0.15);
+      --accent-light: rgba(201, 169, 110, 0.1);
+      --text-primary: #111111;
+      --text-secondary: rgba(17, 17, 17, 0.65);
+      --text-muted: rgba(17, 17, 17, 0.4);
+      --font-serif: 'Cormorant Garamond', serif;
+      --font-sans: 'Montserrat', sans-serif;
+      --ease-cinematic: cubic-bezier(0.76, 0, 0.24, 1);
+      --radius-card: 20px;
+      --radius-btn: 30px;
+      --transition: all 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    /* ============================================
+       RESET & BASE
+    ============================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      padding-top: 100px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* ============================================
+       NAVBAR - MATCHING SITE THEME
+    ============================================ */
+    .navbar {
+      position: fixed;
+      top: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1400px;
+      height: 76px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 0 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      transition: var(--transition);
+    }
+    .navbar.scrolled {
+      top: 1rem;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 35px rgba(17, 17, 17, 0.04);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--text-primary);
+      text-decoration: none;
+      background: linear-gradient(120deg, #c9a96e 0%, #ffffff 25%, #c9a96e 50%, #ffffff 75%, #c9a96e 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 5s linear infinite;
+      display: inline-block;
+      transition: transform 0.4s var(--ease-cinematic);
+    }
+    @keyframes shine {
+      0% { background-position: 0% center; }
+      100% { background-position: -200% center; }
+    }
+    .nav-logo:hover { transform: scale(1.04); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-decoration: none;
+      position: relative;
+      padding: 0.5rem 0;
+      transition: letter-spacing 0.5s var(--ease-cinematic), color 0.3s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 1.5px;
+      background: var(--accent);
+      transition: width 0.4s var(--ease-cinematic), left 0.4s var(--ease-cinematic);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .nav-links a:hover {
+      letter-spacing: 0.34em;
+      color: var(--accent);
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    .nav-links a.active {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .nav-links a.active::after {
+      width: 60%;
+      left: 20%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+      padding: 0.75rem 1.8rem;
+      border-radius: var(--radius-btn);
+      text-decoration: none;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.4s, border-color 0.4s;
+    }
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.6s var(--ease-cinematic);
+      z-index: -1;
+    }
+    .nav-cta:hover {
+      color: var(--bg-primary);
+      border-color: var(--accent);
+    }
+    .nav-cta:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* ============================================
+       HAMBURGER - MATCHING SITE
+    ============================================ */
+    .nav-hamburger {
+      display: none;
+      background: transparent;
+      border: none;
+      width: 28px;
+      height: 18px;
+      position: relative;
+      z-index: 1002;
+      cursor: pointer;
+    }
+    .hamburger-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: var(--text-primary);
+      transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
+    }
+    .line-top { top: 0; }
+    .line-mid { top: 8px; }
+    .line-bottom { top: 16px; }
+    .nav-hamburger.active .line-top { transform: translateY(8px) rotate(45deg); }
+    .nav-hamburger.active .line-mid { opacity: 0; }
+    .nav-hamburger.active .line-bottom { transform: translateY(-8px) rotate(-45deg); }
+
+    .mobile-menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(248, 246, 241, 0.96);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-100%);
+      transition: transform 0.8s var(--ease-cinematic);
+    }
+    .mobile-menu-overlay.active { transform: translateY(0); }
+    .mobile-menu-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.2rem;
+      width: 100%;
+      padding: 2rem;
+    }
+    .mobile-nav-link {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      color: var(--text-primary);
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s var(--ease-cinematic), transform 0.5s var(--ease-cinematic);
+    }
+    .mobile-menu-overlay.active .mobile-nav-link { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+    .mobile-nav-link.active { 
+      color: var(--accent); 
+    }
+    .mobile-nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+      padding: 1.1rem 2.6rem;
+      border-radius: var(--radius-btn);
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s var(--ease-cinematic), transform 0.5s var(--ease-cinematic);
+      margin-top: 1.5rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mobile-menu-overlay.active .mobile-nav-cta { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+
+    /* ============================================
+       BACK LINK
+    ============================================ */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 30px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      font-weight: 500;
+      transition: color 0.3s, transform 0.3s, gap 0.3s;
+      text-transform: uppercase;
+    }
+    .back-link:hover {
+      color: var(--text-primary);
+      transform: translateX(-4px);
+      gap: 0.9rem;
+    }
+    .back-link i { font-size: 12px; }
+
+    /* ============================================
+       SERVICE HEADER
+    ============================================ */
+    .service-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
+    }
+
+    .service-icon-large {
+      font-size: 64px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-light);
+      border-radius: 50%;
+    }
+    .service-icon-large i { font-size: 32px; }
+
+    .service-title {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .service-type {
+      display: inline-block;
+      background: var(--accent-light);
+      padding: 6px 20px;
+      border-radius: var(--radius-btn);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .service-price {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      color: var(--accent);
+      font-weight: 300;
+      margin: 20px 0;
+    }
+    .service-price small {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+
+    .service-description {
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--text-secondary);
+    }
+
+    /* ============================================
+       FEATURES SECTION
+    ============================================ */
+    .features-section {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-card);
+      padding: 40px;
+      border: 1px solid rgba(201, 169, 110, 0.15);
+      transition: transform 0.5s var(--ease-cinematic), border-color 0.5s, box-shadow 0.5s;
+    }
+    .features-section:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201, 169, 110, 0.3);
+      box-shadow: 0 15px 40px rgba(201, 169, 110, 0.06);
+    }
+    .features-section h3 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 300;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      list-style: none;
+    }
+    .features-list li {
+      padding: 10px 0;
+      color: var(--text-secondary);
+      font-size: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      transition: color 0.3s, padding-left 0.3s;
+      cursor: default;
+    }
+    .features-list li::before {
+      content: "✦ ";
+      color: var(--accent);
+      font-size: 12px;
+    }
+    .features-list li:hover {
+      color: var(--text-primary);
+      padding-left: 6px;
+    }
+
+    /* ============================================
+       CTA SECTION
+    ============================================ */
+    .cta-section {
+      text-align: center;
+      padding: 60px 40px;
+      background: var(--accent-light);
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(201, 169, 110, 0.15);
+      transition: all 0.5s var(--ease-cinematic);
+      margin-top: 40px;
+    }
+    .cta-section:hover {
+      border-color: rgba(201, 169, 110, 0.3);
+      box-shadow: 0 10px 40px rgba(201, 169, 110, 0.06);
+    }
+    .cta-section h3 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .cta-section p {
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 40px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      text-decoration: none;
+      border-radius: var(--radius-btn);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .cta-btn:hover {
+      background: #b8935a;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(201, 169, 110, 0.3);
+    }
+    .cta-btn:hover::before { opacity: 1; }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 1150px) {
+      .nav-links, .nav-cta { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+      .navbar { padding: 0 2rem; height: 64px; width: 92%; top: 1rem; }
+    }
+
+    @media (max-width: 768px) {
+      .service-header {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .features-list {
+        grid-template-columns: 1fr;
+      }
+      .service-title {
+        font-size: 32px;
+      }
+      .service-price {
+        font-size: 26px;
+      }
+      .cta-section {
+        padding: 40px 20px;
+      }
+      .cta-section h3 {
+        font-size: 22px;
+      }
+      body {
+        padding-top: 80px;
+      }
+      .service-icon-large {
+        width: 60px;
+        height: 60px;
+      }
+      .service-icon-large i { font-size: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px 30px; }
+      .service-title { font-size: 26px; }
+      .service-description { font-size: 15px; }
+      .features-section { padding: 24px; }
+      .features-list li { font-size: 14px; padding: 8px 0; }
+      .cta-section { padding: 30px 16px; }
+      .cta-section h3 { font-size: 20px; }
+      .cta-btn { padding: 12px 28px; font-size: 11px; }
+    }
+
+    /* ============================================
+       SCROLL REVEAL ANIMATION
+    ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic);
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="{% url 'myapp:home' %}" class="nav-logo">ARCHAUS</a>
+    <div class="nav-links">
+      <a href="{% url 'myapp:home' %}">Home</a>
+      <a href="{% url 'myapp:philosophy' %}">Philosophy</a>
+      <a href="{% url 'myapp:projects' %}">Projects</a>
+      <a href="{% url 'myapp:services' %}" class="active">Services</a>
+      <a href="{% url 'myapp:awards' %}">Awards</a>
+      <a href="{% url 'myapp:studio' %}">Studio</a>
+      <a href="{% url 'myapp:journal' %}">Journal</a>
+      <a href="{% url 'myapp:gallery' %}">Gallery</a>
+      <a href="{% url 'myapp:contact' %}">Contact</a>
+    </div>
+    <a href="{% url 'myapp:contact' %}" class="nav-cta">Begin a Project</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span class="hamburger-line line-top"></span>
+      <span class="hamburger-line line-mid"></span>
+      <span class="hamburger-line line-bottom"></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu-overlay" id="mobileMenu">
+    <div class="mobile-menu-links">
+      <a href="{% url 'myapp:home' %}" class="mobile-nav-link">Home</a>
+      <a href="{% url 'myapp:philosophy' %}" class="mobile-nav-link">Philosophy</a>
+      <a href="{% url 'myapp:projects' %}" class="mobile-nav-link">Projects</a>
+      <a href="{% url 'myapp:services' %}" class="mobile-nav-link active">Services</a>
+      <a href="{% url 'myapp:awards' %}" class="mobile-nav-link">Awards</a>
+      <a href="{% url 'myapp:studio' %}" class="mobile-nav-link">Studio</a>
+      <a href="{% url 'myapp:journal' %}" class="mobile-nav-link">Journal</a>
+      <a href="{% url 'myapp:gallery' %}" class="mobile-nav-link">Gallery</a>
+      <a href="{% url 'myapp:contact' %}" class="mobile-nav-link">Contact</a>
+      <a href="{% url 'myapp:contact' %}" class="mobile-nav-cta">Begin a Project</a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <a href="{% url 'myapp:services' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Services</a>
+    
+    <div class="service-header">
+      <!-- Left Column -->
+      <div class="reveal">
+        <div class="service-icon-large">
+          <i class="{{ service.icon_class|default:'fa-solid fa-building' }}"></i>
+        </div>
+        <div class="service-type">{{ service.service_type|title|default:"Service" }}</div>
+        <h1 class="service-title">{{ service.title }}</h1>
+        {% if service.starting_price %}
+        <div class="service-price">${{ service.starting_price }} <small>starting from</small></div>
+        {% endif %}
+        <p class="service-description">{{ service.description|default:service.short_description }}</p>
+      </div>
+
+      <!-- Right Column - Features -->
+      <div class="features-section reveal" style="transition-delay:0.1s;">
+        <h3>What We Offer</h3>
+        <ul class="features-list">
+          {% if service.features %}
+            {% for feature in service.features %}
+              <li>{{ feature }}</li>
+            {% endfor %}
+          {% else %}
+            <li>Concept Development</li>
+            <li>3D Visualization</li>
+            <li>Construction Documentation</li>
+            <li>Project Management</li>
+            <li>Sustainable Design</li>
+            <li>Material Selection</li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section reveal" style="transition-delay:0.2s;">
+      <h3>Ready to bring your vision to life?</h3>
+      <p>Let's discuss how we can help with your project.</p>
+      <a href="{% url 'myapp:contact' %}" class="cta-btn">Start Your Project →</a>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // NAVBAR SCROLL
+    // ============================================
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // ============================================
+    // HAMBURGER MENU
+    // ============================================
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link, .mobile-nav-cta');
+
+    hamburger.addEventListener('click', () => {
+      const active = hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active', active);
+      mobileLinks.forEach((link, i) => {
+        link.style.transitionDelay = active ? `${i * 0.08}s` : '0s';
+      });
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        mobileLinks.forEach(l => l.style.transitionDelay = '0s');
+      });
+    });
+
+    // ============================================
+    // SCROLL REVEAL
+    // ============================================
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products — ARCHAUS{% endblock %}
+
+{% block extra_css %}
+  <style>
+    /* ========== PRODUCTS PAGE STYLES ========== */
+    .products-hero {
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 140px 8% 60px;
+        background: var(--bg-primary);
+        overflow: hidden;
+    }
+    .products-hero .hero-content { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; }
+    .products-hero .hero-eyebrow { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-bottom: 1.6rem; }
+    .products-hero .label-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .products-hero .tag { font-size: 10px; font-weight: 500; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; }
+    .products-hero h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(3rem, 8vw, 7rem);
+        line-height: 0.92;
+        font-weight: 300;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        margin-bottom: 2.4rem;
+        overflow: hidden;
+    }
+    .products-hero h1 .line { display: block; overflow: hidden; }
+    .products-hero h1 .char { display: inline-block; transform: translateY(110%); }
+    .products-hero h1 .gold { color: var(--accent); font-style: italic; }
+    .products-hero .subtitle { font-size: clamp(15px, 1.1vw, 18px); font-weight: 300; line-height: 1.9; color: var(--text-secondary); max-width: 460px; margin: 0 auto; letter-spacing: 0.02em; }
+    .products-hero .bg-glow {
+        position: absolute; width: 800px; height: 800px;
+        background: radial-gradient(circle, rgba(201, 169, 110, 0.12), transparent 70%);
+        filter: blur(120px); top: 10%; left: 50%; transform: translateX(-50%); pointer-events: none;
+    }
+
+    .products-section { 
+        padding: var(--section-padding-y) var(--section-padding-x); 
+        background: var(--bg-white); 
+        position: relative; 
+    }
+    .header-split-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; margin-bottom: 4rem; flex-wrap: wrap; }
+    .editorial-section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5.8vw, 5.25rem); font-weight: 300; color: var(--text-primary); line-height: 1.05; }
+    .serif-gold { font-style: italic; color: var(--accent); }
+
+    #productGrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 3rem;
+        margin-top: 3rem;
+    }
+
+    @media (max-width: 1024px) {
+        #productGrid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+    }
+    @media (max-width: 640px) {
+        #productGrid { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+
+    .product-card {
+        background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+        border: 1px solid rgba(201,169,110,0.15); border-radius: 16px;
+        padding: 1.8rem; transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+        position: relative;
+    }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(201,169,110,0.1); border-color: var(--accent); }
+    
+    .product-img-wrap { 
+        width: 100%; height: 280px;
+        display: flex; align-items: center; justify-content: center; 
+        background: rgba(248,246,241,0.5); border-radius: 12px; overflow: hidden; margin-bottom: 1.2rem; 
+    }
+    .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+    .product-card:hover .product-img { transform: scale(1.05); }
+    
+    .product-title { font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: var(--text-primary); margin-bottom: 0.3rem; }
+    .product-price { font-family: var(--font-serif); font-size: 20px; font-weight: 500; color: var(--accent); }
+    .product-cat { display: inline-block; margin-top: 0.5rem; font-size: 10px; text-transform: uppercase; color: var(--text-muted); background: rgba(201,169,110,0.08); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    /* Button styles */
+    .delete-btn, .edit-btn {
+        position: absolute; top: 10px; border: none; border-radius: 50%; 
+        width: 28px; height: 28px; color: white; cursor: pointer; 
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; transition: all 0.3s;
+        opacity: 0;
+    }
+    .product-card:hover .delete-btn, .product-card:hover .edit-btn { opacity: 1; }
+    .delete-btn { right: 10px; background: rgba(220, 38, 38, 0.9); }
+    .delete-btn:hover { background: #dc2626; transform: scale(1.1); }
+    .edit-btn { right: 46px; background: rgba(37, 99, 235, 0.9); font-size: 12px; }
+    .edit-btn:hover { background: #2563eb; transform: scale(1.1); }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- HERO SECTION -->
+  <section class="products-hero" id="productsHero">
+      <div class="bg-glow"></div>
+      <div class="hero-content">
+          <div class="hero-eyebrow">
+              <span class="label-dot"></span>
+              <span class="tag">Curated Collection</span>
+          </div>
+          <h1 id="heroTitle">
+              <span class="line">Premium <span class="gold">Architectural</span></span>
+              <span class="line">Material <span class="gold">Essentials</span></span>
+          </h1>
+          <p class="subtitle">
+              Discover our curated selection of high-end materials, furniture, and tools designed for visionary architects.
+          </p>
+      </div>
+  </section>
+
+  <!-- PRODUCTS SECTION -->
+  <section class="products-section">
+      <div class="header-split-row">
+          <h2 class="editorial-section-title">Featured <em class="serif-gold">Products</em></h2>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+              <p id="productCount" style="margin:0; font-size:12px; color:var(--text-muted);">Loading...</p>
+              <button onclick="fetchProducts()" style="background:transparent; border:1px solid rgba(201,169,110,0.3); border-radius:50%; width:36px; height:36px; cursor:pointer; color:var(--accent);">
+                  <i class="fas fa-sync"></i>
+              </button>
+          </div>
+      </div>
+
+      <!-- Add Product Button -->
+      <div style="text-align:right; margin-bottom:2rem;">
+          <button onclick="toggleForm()" id="showFormBtn" style="background:var(--accent); border:none; border-radius:30px; padding:0.8rem 2rem; color:var(--bg-primary); cursor:pointer;">
+              + Add New Product
+          </button>
+      </div>
+
+      <!-- Add Form -->
+      <div id="addForm" style="display:none; background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); border:1px solid rgba(201,169,110,0.2); border-radius:20px; padding:2rem; margin-bottom:3rem;">
+          <h3 style="font-family:var(--font-serif); font-size:24px; margin-bottom:1.5rem;">Add New Product</h3>
+          <form id="productForm" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              {% csrf_token %}
+              <div><label>Title *</label><input type="text" id="title" required style="width:100%; padding:0.8rem; border-radius:10px; border:1px solid rgba(201,169,110,0.2);"></div>
+              <div><label>Price *</label><input type="number" id="price" required step="0.01" style="width:100%; padding:0.8rem; border-radius:10px; border:1px solid rgba(201,169,110,0.2);"></div>
+              <div><label>Description</label><input type="text" id="description" style="width:100%; padding:0.8rem; border-radius:10px; border:1px solid rgba(201,169,110,0.2);"></div>
+              <div><label>Image URL</label><input type="url" id="image" style="width:100%; padding:0.8rem; border-radius:10px; border:1px solid rgba(201,169,110,0.2);"></div>
+              <div><label>Category</label><input type="text" id="category" style="width:100%; padding:0.8rem; border-radius:10px; border:1px solid rgba(201,169,110,0.2);"></div>
+              <div style="display:flex; gap:1rem; align-items:flex-end;">
+                  <button type="submit" id="submitBtn" style="background:var(--accent); border:none; border-radius:30px; padding:0.8rem 2rem; color:var(--bg-primary); cursor:pointer;">Add Product</button>
+                  <button type="button" onclick="toggleForm()" style="background:transparent; border:1px solid rgba(201,169,110,0.3); border-radius:30px; padding:0.8rem 2rem; cursor:pointer;">Cancel</button>
+              </div>
+          </form>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="productGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:2rem; margin-top:2rem;">
+          <div style="grid-column:1/-1; text-align:center; padding:3rem 0;">
+              <p style="font-size:13px; color:var(--text-muted);">Loading products...</p>
+          </div>
+      </div>
+  </section>
+
+  <div id="toastContainer" style="position:fixed; bottom:2rem; right:2rem; z-index:99999;"></div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+      // ============================================================
+      // GSAP HERO ANIMATION
+      // ============================================================
+      document.addEventListener('DOMContentLoaded', () => {
+          const lines = document.querySelectorAll('#heroTitle .line');
+          lines.forEach(line => {
+              const text = line.innerText;
+              line.innerHTML = '';
+              text.split('').forEach(ch => {
+                  const span = document.createElement('span');
+                  span.className = 'char';
+                  span.textContent = ch === ' ' ? '\u00A0' : ch;
+                  line.appendChild(span);
+              });
+          });
+          gsap.to('#heroTitle .char', { y: '0%', duration: 1, stagger: 0.04, ease: "power4.out", delay: 0.2 });
+          gsap.from('.subtitle', { opacity: 0, y: 20, duration: 1, ease: "power3.out", delay: 0.8 });
+      });
+
+      // ============================================================
+      // FULLY WORKING PRODUCT CRUD
+      // ============================================================
+
+      function getCSRFToken() {
+          const cookieValue = document.cookie.split('; ')
+              .find(row => row.startsWith('csrftoken='))
+              ?.split('=')[1];
+          if (cookieValue) return cookieValue;
+          const input = document.querySelector('[name=csrfmiddlewaretoken]');
+          return input ? input.value : '';
+      }
+
+      // 1. FETCH PRODUCTS
+      async function fetchProducts() {
+          const grid = document.getElementById('productGrid');
+          const count = document.getElementById('productCount');
+          try {
+              const response = await fetch('/api/products/');
+              if (!response.ok) throw new Error(`Server returned ${response.status}`);
+              const products = await response.json();
+              count.textContent = `${products.length} products`;
+
+              if (products.length === 0) {
+                  grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 0;"><p style="font-family:var(--font-serif); font-size:20px; color:var(--accent);">✦</p><p style="font-size:14px; color:var(--text-secondary);">No products available</p></div>`;
+                  return;
+              }
+
+              grid.innerHTML = products.map((p, i) => `
+                  <div class="product-card" style="opacity:0; transform:translateY(30px); animation:fadeInUp 0.6s forwards ${i * 0.08}s;">
+                      <button class="delete-btn" onclick="deleteProduct(${p.id})" title="Delete">×</button>
+                      <button class="edit-btn" onclick="editProduct(${p.id})" title="Edit">✎</button>
+                      <div class="product-img-wrap"><img src="${p.image}" alt="${p.title}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70'" /></div>
+                      <h3 class="product-title">${p.title.length > 40 ? p.title.substring(0,40) + '...' : p.title}</h3>
+                      <span class="product-price">$${p.price}</span>
+                      ${p.category ? `<span class="product-cat">${p.category}</span>` : ''}
+                  </div>
+              `).join('');
+          } catch (error) {
+              grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 0;"><p style="font-family:var(--font-serif); font-size:24px; color:var(--accent);">✦</p><p style="font-size:14px; color:var(--text-secondary);">Error: ${error.message}</p></div>`;
+              count.textContent = 'Failed to load';
+          }
+      }
+
+      // 2. ADD PRODUCT
+      document.getElementById('productForm').addEventListener('submit', addProductHandler);
+      async function addProductHandler(e) {
+          e.preventDefault();
+          const csrfToken = getCSRFToken();
+          const productData = {
+              title: document.getElementById('title').value,
+              price: parseFloat(document.getElementById('price').value),
+              description: document.getElementById('description').value,
+              image: document.getElementById('image').value || 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70',
+              category: document.getElementById('category').value || 'uncategorized'
+          };
+          try {
+              const response = await fetch('/api/products/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                  body: JSON.stringify(productData)
+              });
+              const data = await response.json();
+              if (response.ok) { showToast('✅ ' + data.message); fetchProducts(); toggleForm(); document.getElementById('productForm').reset(); }
+              else { showToast('❌ ' + data.error); }
+          } catch (error) { showToast('❌ Error: ' + error.message); }
+      }
+
+      // 3. DELETE PRODUCT
+      async function deleteProduct(id) {
+          if (!confirm('Delete this product?')) return;
+          const csrfToken = getCSRFToken();
+          try {
+              const response = await fetch(`/api/products/${id}/`, {
+                  method: 'DELETE',
+                  headers: { 
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': csrfToken 
+                  }
+              });
+              const data = await response.json();
+              if (response.ok) { 
+                  showToast('🗑️ ' + data.message); 
+                  fetchProducts(); 
+              } else { 
+                  showToast('❌ ' + (data.error || 'Failed to delete')); 
+              }
+          } catch (error) { 
+              showToast('❌ Error: ' + error.message); 
+          }
+      }
+
+      // 4. EDIT PRODUCT
+      async function editProduct(id) {
+          try {
+              const response = await fetch(`/api/products/${id}/`);
+              if (!response.ok) throw new Error('Product not found');
+              const product = await response.json();
+
+              document.getElementById('title').value = product.title || '';
+              document.getElementById('price').value = product.price || '';
+              document.getElementById('description').value = product.description || '';
+              document.getElementById('image').value = product.image || '';
+              document.getElementById('category').value = product.category || '';
+
+              toggleForm();
+              document.getElementById('submitBtn').textContent = 'Update Product';
+
+              document.getElementById('productForm').onsubmit = async (e) => {
+                  e.preventDefault();
+                  const csrfToken = getCSRFToken();
+                  const productData = {
+                      title: document.getElementById('title').value,
+                      price: parseFloat(document.getElementById('price').value),
+                      description: document.getElementById('description').value,
+                      image: document.getElementById('image').value || 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=480&q=70',
+                      category: document.getElementById('category').value || 'uncategorized'
+                  };
+                  try {
+                      const response = await fetch(`/api/products/${id}/`, {
+                          method: 'PUT',
+                          headers: { 
+                              'Content-Type': 'application/json', 
+                              'X-CSRFToken': csrfToken 
+                          },
+                          body: JSON.stringify(productData)
+                      });
+                      const data = await response.json();
+                      if (response.ok) { 
+                          showToast('✏️ ' + data.message); 
+                          fetchProducts(); 
+                          toggleForm(); 
+                          document.getElementById('productForm').reset();
+                          document.getElementById('submitBtn').textContent = 'Add Product';
+                          document.getElementById('productForm').onsubmit = addProductHandler;
+                      } else { 
+                          showToast('❌ ' + data.error); 
+                      }
+                  } catch (error) { 
+                      showToast('❌ Error: ' + error.message); 
+                  }
+              };
+          } catch (error) {
+              showToast('❌ Error loading product: ' + error.message);
+          }
+      }
+
+      // 5. TOGGLE FORM
+      function toggleForm() {
+          const form = document.getElementById('addForm');
+          const btn = document.getElementById('showFormBtn');
+          if (form.style.display === 'none') { 
+              form.style.display = 'block'; 
+              btn.textContent = '✕ Cancel'; 
+          } else { 
+              form.style.display = 'none'; 
+              btn.textContent = '+ Add New Product'; 
+              document.getElementById('productForm').reset();
+              document.getElementById('submitBtn').textContent = 'Add Product';
+              document.getElementById('productForm').onsubmit = addProductHandler;
+          }
+      }
+
+      // 6. TOAST NOTIFICATION
+      function showToast(message) {
+          const container = document.getElementById('toastContainer');
+          const toast = document.createElement('div');
+          toast.style.cssText = `background:rgba(255,255,255,0.95); backdrop-filter:blur(20px); border:1px solid rgba(201,169,110,0.3); border-radius:16px; padding:1rem 2rem; font-family:var(--font-sans); font-size:14px; color:var(--text-primary); box-shadow:0 20px 40px rgba(17,17,17,0.1); margin-top:10px; transform:translateY(20px); opacity:0; transition:all 0.4s;`;
+          toast.textContent = message;
+          container.appendChild(toast);
+          setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 100);
+          setTimeout(() => { 
+              toast.style.transform = 'translateY(20px)'; 
+              toast.style.opacity = '0'; 
+              setTimeout(() => toast.remove(), 400); 
+          }, 3000);
+      }
+
+      document.addEventListener('DOMContentLoaded', fetchProducts);
+  </script>
+{% endblock %}

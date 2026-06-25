@@ -1,0 +1,290 @@
+[
+  {
+    "id": 2,
+    "title": "Modern Luxury Villa",
+    "price": 4000.0,
+    "description": "Updated premium architectural design",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "Ligting",
+    "createdAt": "2026-06-16T18:56:41.186848"
+  },
+  {
+    "id": 3,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium architectural design",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "architecture",
+    "createdAt": "2026-06-16T18:56:42.413257"
+  },
+  {
+    "id": 4,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium architectural design",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "architecture",
+    "createdAt": "2026-06-16T18:56:42.617597"
+  },
+  {
+    "id": 5,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium architectural design",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "architecture",
+    "createdAt": "2026-06-16T18:56:43.314853"
+  },
+  {
+    "id": 7,
+    "title": "laxurui  havy style degian file",
+    "price": 250000.0,
+    "description": "ok Good For Response",
+    "image": "https://plus.unsplash.com/premium_photo-1683140882981-490928b33596?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "category": "1",
+    "createdAt": "2026-06-16T20:55:48.816576"
+  },
+  {
+    "id": 12,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium villa architecture",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "Design",
+    "createdAt": "2026-06-17T10:57:35.268674"
+  },
+  {
+    "id": 13,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium villa architecture",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "Design",
+    "createdAt": "2026-06-17T10:58:11.251894"
+  },
+  {
+    "id": 14,
+    "title": "Luxury Villa Design",
+    "price": 2500.0,
+    "description": "Premium villa architecture",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "Design",
+    "createdAt": "2026-06-17T11:02:15.192414"
+  },
+  {
+    "id": 17,
+    "title": "Luxury Villa",
+    "price": 5500.0,
+    "description": "Premium luxury villa with pool",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "luxury",
+    "createdAt": "2026-06-17T11:35:56.653453"
+  },
+  {
+    "id": 18,
+    "title": "Luxury Villa",
+    "price": 5500.0,
+    "description": "Premium luxury villa with infinity pool",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "luxury",
+    "createdAt": "2026-06-17T11:44:43.629052"
+  },
+  {
+    "id": 19,
+    "title": "Modern Glass House",
+    "price": 6500.0,
+    "description": "Contemporary glass architecture with panoramic views",
+    "image": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80",
+    "category": "modern",
+    "createdAt": "2026-06-17T11:44:45.670980"
+  },
+  {
+    "id": 20,
+    "title": "Woodland Retreat",
+    "price": 3800.0,
+    "description": "Peaceful nature retreat surrounded by forest",
+    "image": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=400&q=80",
+    "category": "nature",
+    "createdAt": "2026-06-17T11:44:47.692934"
+  },
+  {
+    "id": 21,
+    "title": "Heritage Mansion",
+    "price": 7200.0,
+    "description": "Classic stone architecture with modern interiors",
+    "image": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80",
+    "category": "heritage",
+    "createdAt": "2026-06-17T11:44:49.712509"
+  },
+  {
+    "id": 22,
+    "title": "Minimalist Loft",
+    "price": 3200.0,
+    "description": "Urban minimalist design with open spaces",
+    "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&q=80",
+    "category": "minimalist",
+    "createdAt": "2026-06-17T11:44:51.726453"
+  },
+  {
+    "id": 23,
+    "title": "Beachfront Paradise",
+    "price": 8900.0,
+    "description": "Luxury beachfront villa with ocean views",
+    "image": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&q=80",
+    "category": "beachfront",
+    "createdAt": "2026-06-17T11:44:53.754070"
+  },
+  {
+    "id": 24,
+    "title": "Mediterranean Villa",
+    "price": 4800.0,
+    "description": "Mediterranean style villa with courtyard",
+    "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80",
+    "category": "mediterranean",
+    "createdAt": "2026-06-17T11:44:55.774977"
+  },
+  {
+    "id": 25,
+    "title": "Luxury Villa",
+    "price": 5500.0,
+    "description": "Premium luxury villa with infinity pool",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "luxury",
+    "createdAt": "2026-06-17T11:48:23.501699"
+  },
+  {
+    "id": 26,
+    "title": "Modern Glass House",
+    "price": 6500.0,
+    "description": "Contemporary glass architecture with panoramic views",
+    "image": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80",
+    "category": "modern",
+    "createdAt": "2026-06-17T11:48:25.534495"
+  },
+  {
+    "id": 27,
+    "title": "Woodland Retreat",
+    "price": 3800.0,
+    "description": "Peaceful nature retreat surrounded by forest",
+    "image": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=400&q=80",
+    "category": "nature",
+    "createdAt": "2026-06-17T11:48:27.555901"
+  },
+  {
+    "id": 28,
+    "title": "Heritage Mansion",
+    "price": 7200.0,
+    "description": "Classic stone architecture with modern interiors",
+    "image": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80",
+    "category": "heritage",
+    "createdAt": "2026-06-17T11:48:29.576186"
+  },
+  {
+    "id": 29,
+    "title": "Minimalist Loft",
+    "price": 3200.0,
+    "description": "Urban minimalist design with open spaces",
+    "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&q=80",
+    "category": "minimalist",
+    "createdAt": "2026-06-17T11:48:31.603737"
+  },
+  {
+    "id": 30,
+    "title": "Beachfront Paradise",
+    "price": 8900.0,
+    "description": "Luxury beachfront villa with ocean views",
+    "image": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&q=80",
+    "category": "beachfront",
+    "createdAt": "2026-06-17T11:48:33.622434"
+  },
+  {
+    "id": 31,
+    "title": "Mediterranean Villa",
+    "price": 4800.0,
+    "description": "Mediterranean style villa with courtyard",
+    "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80",
+    "category": "mediterranean",
+    "createdAt": "2026-06-17T11:48:35.638482"
+  },
+  {
+    "id": 32,
+    "title": "Luxury Villa",
+    "price": 5500.0,
+    "description": "Premium luxury villa with infinity pool",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+    "category": "luxury",
+    "createdAt": "2026-06-17T11:53:22.213890"
+  },
+  {
+    "id": 33,
+    "title": "Modern Glass House",
+    "price": 6500.0,
+    "description": "Contemporary glass architecture with panoramic views",
+    "image": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80",
+    "category": "modern",
+    "createdAt": "2026-06-17T11:53:24.236083"
+  },
+  {
+    "id": 34,
+    "title": "Woodland Retreat",
+    "price": 3800.0,
+    "description": "Peaceful nature retreat surrounded by forest",
+    "image": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=400&q=80",
+    "category": "nature",
+    "createdAt": "2026-06-17T11:53:26.263816"
+  },
+  {
+    "id": 35,
+    "title": "Heritage Mansion",
+    "price": 7200.0,
+    "description": "Classic stone architecture with modern interiors",
+    "image": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80",
+    "category": "heritage",
+    "createdAt": "2026-06-17T11:53:28.292002"
+  },
+  {
+    "id": 36,
+    "title": "Minimalist Loft",
+    "price": 3200.0,
+    "description": "Urban minimalist design with open spaces",
+    "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&q=80",
+    "category": "minimalist",
+    "createdAt": "2026-06-17T11:53:30.329559"
+  },
+  {
+    "id": 37,
+    "title": "Beachfront Paradise",
+    "price": 8900.0,
+    "description": "Luxury beachfront villa with ocean views",
+    "image": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&q=80",
+    "category": "beachfront",
+    "createdAt": "2026-06-17T11:53:32.364860"
+  },
+  {
+    "id": 38,
+    "title": "Mediterranean Villa",
+    "price": 4800.0,
+    "description": "Mediterranean style villa with courtyard",
+    "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80",
+    "category": "mediterranean",
+    "createdAt": "2026-06-17T11:53:34.382970"
+  },
+  {
+    "id": 39,
+    "title": "Mediterranean Villa",
+    "price": 4800.0,
+    "description": "Mediterranean style villa with courtyard",
+    "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80",
+    "category": "mediterranean",
+    "createdAt": "2026-06-17T14:41:33.661002"
+  },
+  {
+    "id": 40,
+    "title": "Moden  Design Studio",
+    "price": 50000.0,
+    "description": "",
+    "image": "https://images.unsplash.com/photo-1616047006789-b7af5afb8c20?q=80",
+    "category": "Premium",
+    "createdAt": "2026-06-17T15:03:52.081162"
+  }
+]
