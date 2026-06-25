@@ -38,7 +38,7 @@ ALLOWED_HOSTS = [
 ]
 
 # If you want to allow all hosts during development (not recommended for production):
-# ALLOWED_HOSTS = ['*']  # ⚠️ Only for development!
+ALLOWED_HOSTS = ['*']  # ⚠️ Only for development!
 
 # ----------------------------
 # INSTALLED APPS
