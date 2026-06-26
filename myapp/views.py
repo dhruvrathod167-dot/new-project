@@ -373,19 +373,19 @@ def projects_list(request):
 
 def project_detail(request, slug):
     try:
-        # Use 'status' instead of 'is_active'
-        project = Project.objects.get(slug=slug, status='published')  # or 'active'
+        # Accept multiple statuses
+        project = Project.objects.get(
+            slug=slug,
+            status__in=['published', 'in_progress', 'completed', 'active']
+        )
         
-        # Or if you want to show all projects regardless of status:
-        # project = Project.objects.get(slug=slug)
-        
-        # Get related projects
         related = Project.objects.filter(
-            category=project.category,
-            status='published'  # Use correct field
+            status__in=['published', 'in_progress', 'completed', 'active']
         ).exclude(id=project.id)[:3]
         
-        all_projects = Project.objects.filter(status='published')  # Use correct field
+        all_projects = Project.objects.filter(
+            status__in=['published', 'in_progress', 'completed', 'active']
+        )
         
         context = {
             'project': project,
