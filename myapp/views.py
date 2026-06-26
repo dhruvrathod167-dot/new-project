@@ -353,7 +353,7 @@ def projects_list(request):
         projects = Project.objects.filter(status='completed').order_by('-year_completed')
         
         # ✅ Only show tags from completed projects
-        tags = Tag.objects.filter(project__status='completed').distinct()
+        tags = Tag.objects.filter(projects__status='completed').distinct()   # ← 's' add kari (projects, nahi project)
         
         # ✅ Only completed projects for dropdown
         all_projects = Project.objects.filter(status='completed').order_by('title')
@@ -380,7 +380,7 @@ def project_detail(request, slug):
         project = get_object_or_404(
             Project,
             slug=slug,
-            status='completed'  # ✅ Only completed projects
+            status='completed'
         )
         
         # ✅ Only completed projects for navigation
@@ -391,7 +391,7 @@ def project_detail(request, slug):
         # ✅ Related projects from same category (completed only)
         related = Project.objects.filter(
             category=project.category,
-            status='completed'  # ✅ Only completed projects
+            status='completed'
         ).exclude(pk=project.pk)[:3]
 
         return render(
