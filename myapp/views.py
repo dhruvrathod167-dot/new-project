@@ -372,19 +372,20 @@ def projects_list(request):
 
 
 def project_detail(request, slug):
-    """Display a single project with its details."""
     try:
-        # Get the project
-        project = Project.objects.get(slug=slug, is_active=True)
+        # Use 'status' instead of 'is_active'
+        project = Project.objects.get(slug=slug, status='published')  # or 'active'
         
-        # Get related projects (same category, excluding current)
+        # Or if you want to show all projects regardless of status:
+        # project = Project.objects.get(slug=slug)
+        
+        # Get related projects
         related = Project.objects.filter(
             category=project.category,
-            is_active=True
+            status='published'  # Use correct field
         ).exclude(id=project.id)[:3]
         
-        # Get all projects for navigation dropdown
-        all_projects = Project.objects.filter(is_active=True)
+        all_projects = Project.objects.filter(status='published')  # Use correct field
         
         context = {
             'project': project,
@@ -392,13 +393,10 @@ def project_detail(request, slug):
             'all_projects': all_projects,
         }
         
-        # ✅ RENDER THE CORRECT TEMPLATE
         return render(request, 'myapp/project_detail.html', context)
         
     except Project.DoesNotExist:
-        # If project doesn't exist, raise 404
         raise Http404("Project not found")
-
 
 # ============================================================
 # 🔒 AUTH VIEWS (WITH SECURITY FIXES)
