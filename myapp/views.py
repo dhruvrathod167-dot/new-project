@@ -372,47 +372,32 @@ def projects_list(request):
 
 
 def project_detail(request, slug):
-    """
-    Single project detail - ✅ SECURE: Only shows completed projects
-    """
+    """Display a single project with its details."""
     try:
-        # ✅ SECURE: Only show completed projects
-        project = get_object_or_404(
-            Project,
-            slug=slug,
-            status='completed'
-        )
+        # Get the project
+        project = Project.objects.get(slug=slug, is_active=True)
         
-        # ✅ Only completed projects for navigation
-        all_projects = Project.objects.filter(
-            status='completed'
-        ).order_by("title")
-        
-        # ✅ Related projects from same category (completed only)
+        # Get related projects (same category, excluding current)
         related = Project.objects.filter(
             category=project.category,
-            status='completed'
-        ).exclude(pk=project.pk)[:3]
-
-        return render(
-            request,
-            "project_detail.html",
-            {
-                "project": project,
-                "all_projects": all_projects,
-                "related": related,
-            },
-        )
-    except Http404:
-        logger.warning(f"Project not found: slug={slug}")
-        return render(request, '404.html', {
-            'error': 'Project not found or not published'
-        }, status=404)
-    except Exception as e:
-        logger.error(f"Project detail error - slug: {slug}, error: {str(e)}")
-        return render(request, 'project_detail.html', {
-            'error': 'Unable to load project details'
-        }, status=500)
+            is_active=True
+        ).exclude(id=project.id)[:3]
+        
+        # Get all projects for navigation dropdown
+        all_projects = Project.objects.filter(is_active=True)
+        
+        context = {
+            'project': project,
+            'related': related,
+            'all_projects': all_projects,
+        }
+        
+        # ✅ RENDER THE CORRECT TEMPLATE
+        return render(request, 'myapp/project_detail.html', context)
+        
+    except Project.DoesNotExist:
+        # If project doesn't exist, raise 404
+        raise Http404("Project not found")
 
 
 # ============================================================
