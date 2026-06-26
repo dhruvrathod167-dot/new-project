@@ -6,7 +6,14 @@ SECRET_KEY = "django-insecure-dev-key"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+# ✅ CORRECT ALLOWED_HOSTS - Only this one matters
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "new-project-owqg.onrender.com",
+    ".onrender.com",  # This matches any render.com subdomain
+]
+
 AUTH_USER_MODEL = "myapp.User"
 
 INSTALLED_APPS = [
@@ -15,7 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",  # ✅ This is here
+    "django.contrib.staticfiles",
     "myapp",
 ]
 
@@ -27,7 +34,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-        
 ]
 
 ROOT_URLCONF = "myproject.urls"
@@ -42,6 +48,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "myapp.context_processors.global_projects",
             ],
         },
     },
@@ -60,6 +67,7 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+
 # ============================================
 # ✅ STATIC FILES CONFIGURATION
 # ============================================
@@ -70,7 +78,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ============================================
-# ✅ MEDIA FILES CONFIGURATION — ye missing hatu!
+# ✅ MEDIA FILES CONFIGURATION
 # ============================================
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

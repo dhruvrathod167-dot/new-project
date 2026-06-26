@@ -571,7 +571,7 @@
         {% if member.profile_photo %}
           <img src="{{ member.profile_photo.url }}" 
                alt="{{ member.name }} - {{ member.get_role_display }}"
-               loading="Fast">
+               loading="lazy">
         {% else %}
           <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);color:var(--text-muted);font-family:var(--font-sans);font-size:14px;text-align:center;padding:20px;">
             No Image<br>Available
@@ -583,7 +583,7 @@
         <div class="team-card-name">{{ member.name }}</div>
         <div class="team-card-role">{{ member.get_role_display }}</div>
         <div class="team-card-spec">
-          {{ member.short_bio|default:member.experience_years|stringformat:"s" }} years experience
+          {{ member.experience_years }} years experience
         </div>
       </div>
     </div>
